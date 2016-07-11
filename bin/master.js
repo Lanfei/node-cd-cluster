@@ -39,7 +39,7 @@ program
 			fs.remove(filename);
 			process.kill(pid);
 		} catch (e) {
-			console.log(e.message);
+			console.error(e.message);
 		}
 	});
 

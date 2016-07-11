@@ -17,7 +17,6 @@ program
 		var env = process.env;
 		env['PORT'] = port || 8081;
 		env['CLUSTER_ROLE'] = 'slave';
-		console.log(env['PORT']);
 		var child = spawn(process.argv[0], [__dirname + '/www'], {
 			detached: true,
 			env: env
@@ -42,7 +41,7 @@ program
 			fs.remove(filename);
 			process.kill(pid);
 		} catch (e) {
-			console.log(e.message);
+			console.error(e.message);
 		}
 	});
 
