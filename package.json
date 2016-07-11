@@ -1,6 +1,6 @@
 {
-  "name": "ncc-slave",
-  "version": "0.1.0",
+  "name": "cd-cluster",
+  "version": "0.1.1",
   "description": "A Continuous Deployment / Continuous Integration platform written in node.",
   "main": "index.js",
   "bin": {
