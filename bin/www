@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+var http = require('http');
+
+var port = +process.env['PORT'];
+var server = http.createServer(require('../app'));
+
+server.on('listening', function () {
+	console.log('Listening on ' + port);
+});
+
+server.on('error', function (err) {
+	console.error(err);
+});
+
+server.listen(port);

@@ -1,0 +1,40 @@
+{
+  "name": "ncc-slave",
+  "version": "0.1.0",
+  "description": "A Continuous Deployment / Continuous Integration platform written in node.",
+  "main": "index.js",
+  "bin": {
+    "cd-master": "./bin/master.js",
+    "cd-slave": "./bin/slave.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/node-cd-cluster/ncc-slave.git"
+  },
+  "keywords": [
+    "continuous",
+    "deployment",
+    "integration",
+    "cluster"
+  ],
+  "author": "Lanfei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/node-cd-cluster/ncc-slave/issues"
+  },
+  "homepage": "https://github.com/node-cd-cluster/ncc-slave#readme",
+  "dependencies": {
+    "archiver": "^1.0.0",
+    "async": "^2.0.0-rc.6",
+    "color2html": "^0.1.2",
+    "commander": "^2.9.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "fs-extra": "^0.30.0",
+    "gotpl": "^4.6.0",
+    "unzip2": "^0.2.5"
+  }
+}
