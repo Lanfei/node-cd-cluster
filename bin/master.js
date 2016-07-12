@@ -14,10 +14,11 @@ program
 	.description('start cd-cluster master')
 	.action(function (port) {
 		var env = process.env;
-		env['PORT'] = port || 8080;
+		env['CD_CLUSTER_PORT'] = port || 8080;
 		var child = spawn(process.argv[0], [__dirname + '/www'], {
+			env: env,
 			detached: true,
-			env: env
+			stdio: ['ignore']
 		});
 		child.unref();
 		child.stdout.on('data', function () {

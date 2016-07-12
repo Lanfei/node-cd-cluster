@@ -15,11 +15,12 @@ program
 	.option('-t, --token', 'a token used to verify deployment requests')
 	.action(function (port) {
 		var env = process.env;
-		env['PORT'] = port || 8081;
-		env['CLUSTER_ROLE'] = 'slave';
+		env['CD_CLUSTER_PORT'] = port || 8081;
+		env['CD_CLUSTER_ROLE'] = 'slave';
 		var child = spawn(process.argv[0], [__dirname + '/www'], {
+			env: env,
 			detached: true,
-			env: env
+			stdio: ['ignore']
 		});
 		child.unref();
 		child.stdout.on('data', function () {

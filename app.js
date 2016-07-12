@@ -5,7 +5,7 @@ var gotpl = require('gotpl');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 
-var role = process.env['CLUSTER_ROLE'] || 'master';
+var role = process.env['CD_CLUSTER_ROLE'] || 'master';
 
 var app = express();
 

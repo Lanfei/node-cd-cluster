@@ -2,7 +2,7 @@
 
 var http = require('http');
 
-var port = +process.env['PORT'];
+var port = +process.env['CD_CLUSTER_PORT'];
 var server = http.createServer(require('../app'));
 
 server.on('listening', function () {
