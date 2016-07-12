@@ -12,11 +12,12 @@ program
 program
 	.command('start [port=8081]')
 	.description('start cd-cluster slave')
-	.option('-t, --token', 'a token used to verify deployment requests')
-	.action(function (port) {
+	.option('-t, --token [token]', 'a token used to verify requests')
+	.action(function (port, options) {
 		var env = process.env;
 		env['CD_CLUSTER_PORT'] = port || 8081;
 		env['CD_CLUSTER_ROLE'] = 'slave';
+		env['CD_CLUSTER_TOKEN'] = options['token'];
 		var child = spawn(process.argv[0], [__dirname + '/www'], {
 			env: env,
 			detached: true,

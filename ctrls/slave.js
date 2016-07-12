@@ -6,6 +6,8 @@ var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
 var projectModule = require('../modules/project');
 
+var expectedToken = process.env['CD_CLUSTER_TOKEN'] || '';
+
 exports.deployHandler = function (req, res, next) {
 	var cwd = req.query['cwd'];
 	var name = req.query['name'];
@@ -18,8 +20,7 @@ exports.deployHandler = function (req, res, next) {
 	var env = projectModule.getBuildEnv(name, historyId);
 	async.waterfall([
 		function (next) {
-			var expected = process.env['TOKEN'] || '';
-			if (expected === token) {
+			if (token === expectedToken) {
 				next();
 			} else {
 				next(errFactory.unauthorized('Invalid Token'));
@@ -73,8 +74,7 @@ exports.executeHandler = function (req, res, next) {
 	var env = projectModule.getBuildEnv(name);
 	async.waterfall([
 		function (next) {
-			var expected = process.env['TOKEN'] || '';
-			if (expected === token) {
+			if (token === expectedToken) {
 				next();
 			} else {
 				next(errFactory.unauthorized('Invalid Token'));
@@ -99,6 +99,7 @@ function runCommand(type, command, cwd, env, next) {
 		next(null, '');
 		return;
 	}
+	var finished = false;
 	var output = command + '\n';
 	var configDir = utils.getConfigDir();
 	var rnd = Math.floor(Math.random() * Date.now());
@@ -119,13 +120,21 @@ function runCommand(type, command, cwd, env, next) {
 				output += data.toString();
 			});
 			p.on('close', function (code) {
-				if (code !== 0) {
-					next(new Error('Process exited with code ' + code));
-				} else {
-					next();
+				if (!finished) {
+					finished = true;
+					if (code !== 0) {
+						next(new Error('Process exited with code ' + code));
+					} else {
+						next();
+					}
 				}
 			});
-			p.on('error', next);
+			p.on('error', function (err) {
+				if (!finished) {
+					finished = true;
+					next(err);
+				}
+			});
 		}
 	], function (err) {
 		fs.remove(commandFile);

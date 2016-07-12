@@ -415,6 +415,7 @@ function runCommand(name, historyId, step, command, next) {
 			fs.outputFile(commandFile, command, next);
 		},
 		function (next) {
+			var finished = false;
 			var workspace = exports.getWorkspace(name);
 			var p = spawn('sh', [commandFile], {
 				cwd: workspace,
@@ -427,13 +428,21 @@ function runCommand(name, historyId, step, command, next) {
 				historyModule.writeOutput(name, historyId, step, data);
 			});
 			p.on('close', function (code) {
-				if (code !== 0) {
-					next(new Error('Process exited with code ' + code));
-				} else {
-					next();
+				if (!finished) {
+					finished = true;
+					if (code !== 0) {
+						next(new Error('Process exited with code ' + code));
+					} else {
+						next();
+					}
 				}
 			});
-			p.on('error', next);
+			p.on('error', function (err) {
+				if (!finished) {
+					finished = true;
+					next(err);
+				}
+			});
 			tasks[name] = {
 				id: historyId,
 				process: p
