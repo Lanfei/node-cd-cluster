@@ -1,6 +1,6 @@
 {
   "name": "cd-cluster",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "A Continuous Deployment / Continuous Integration platform written in node.",
   "main": "index.js",
   "bin": {
@@ -32,9 +32,11 @@
     "color2html": "^0.1.2",
     "commander": "^2.9.0",
     "cookie-parser": "^1.4.3",
+    "date-stream": "^1.0.1",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "gotpl": "^4.6.0",
+    "morgan": "^1.7.0",
     "unzip2": "^0.2.5"
   }
 }

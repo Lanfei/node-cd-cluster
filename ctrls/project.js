@@ -6,7 +6,7 @@ var errFactory = require('../libs/err_factory');
 var projectModule = require('../modules/project');
 var historyModule = require('../modules/history');
 
-var AVAILABLE_FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts'];
+var AVAILABLE_FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts'];
 
 var projects = projectModule.projects;
 
@@ -152,9 +152,6 @@ exports.buildHandler = function (req, res, next) {
 	var name = req.params['name'];
 	async.waterfall([
 		function (next) {
-			utils.checkParams(name, next);
-		},
-		function (next) {
 			checkProject(name, next);
 		},
 		function (project, next) {
@@ -189,6 +186,54 @@ exports.abortHandler = function (req, res, next) {
 		} else {
 			res.json({
 				data: projectModule.getProject(name)
+			});
+		}
+	});
+};
+
+exports.deployHandler = function (req, res, next) {
+	var name = req.params['name'];
+	var historyId = req.query['history_id'];
+	async.waterfall([
+		function (next) {
+			utils.checkParams(historyId, next);
+		},
+		function (next) {
+			checkProject(name, next);
+		},
+		function (project, next) {
+			projectModule.deployProject(name, historyId, next);
+		}
+	], function (err, result) {
+		if (err) {
+			next(err);
+		} else {
+			res.json({
+				data: color2html(result['output'])
+			});
+		}
+	});
+};
+
+exports.executeHandler = function (req, res, next) {
+	var name = req.params['name'];
+	var scriptId = req.query['script_id'];
+	async.waterfall([
+		function (next) {
+			utils.checkParams(scriptId, next);
+		},
+		function (next) {
+			checkProject(name, next);
+		},
+		function (project, next) {
+			projectModule.executeScript(name, scriptId, next);
+		}
+	], function (err, result) {
+		if (err) {
+			next(err);
+		} else {
+			res.json({
+				data: color2html(result['output'])
 			});
 		}
 	});

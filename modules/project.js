@@ -28,8 +28,11 @@ exports.getProject = function (name) {
 };
 
 exports.addProject = function (project, next) {
-	projects.push(project);
-	utils.writeConfig('projects', projects, next);
+	var name = project['name'];
+	exports.deleteProject(name, function (err) {
+		projects.push(project);
+		next(err);
+	});
 };
 
 exports.updateProject = function (name, data, next) {
@@ -262,6 +265,7 @@ exports.deployProject = function (name, historyId, next) {
 			pre_deploy_scripts: project['pre_deploy_scripts'],
 			post_deploy_scripts: project['post_deploy_scripts']
 		};
+		var finished = false;
 		var qs = querystring.stringify(data);
 		var host = node['host'];
 		var port = node['port'];
@@ -271,26 +275,77 @@ exports.deployProject = function (name, historyId, next) {
 			method: 'post',
 			path: '/deploy?' + qs
 		}, function (res) {
-			utils.receiveJSON(res, next);
+			utils.receiveJSON(res, function (err, json) {
+				if (!finished) {
+					finished = true;
+					next(err, json);
+				}
+			});
 		});
-		req.on('error', next);
+		req.on('error', function (err) {
+			if (!finished) {
+				finished = true;
+				next(err);
+			}
+		});
 		stream.pipe(req);
 	}, function (err, results) {
-		var output = '';
-		var deployResult = {};
-		if (results) {
-			output = results.map(function (result, i) {
-				result = result || {};
-				if (result['error']) {
-					deployResult['error'] = new Error('Deployment Failed');
-				}
-				var node = nodes[i];
-				var host = node['host'];
-				return '\u001b[1m' + host + ':\u001b[22m\n' + (result['data'] || result['error_desc'] || '');
-			}).join('\n\n');
+		if (err) {
+			next(err);
+		} else {
+			resolveNodeResults(results, nodes, next);
 		}
-		deployResult['output'] = output;
-		next(err, deployResult);
+	});
+};
+
+exports.executeScript = function (name, scriptId, next) {
+	var project = exports.getProject(name);
+	if (!project) {
+		next();
+		return;
+	}
+	var nodes = project['deploy_nodes'];
+	var operationScript = project['operation_scripts'] || [];
+	var script = operationScript[scriptId];
+	async.map(nodes, function (node, next) {
+		var data = {
+			name: name,
+			cwd: node['cwd'],
+			host: node['host'],
+			script_id: scriptId,
+			command: script['command'],
+			token: project['deploy_token']
+		};
+		var finished = false;
+		var qs = querystring.stringify(data);
+		var host = node['host'];
+		var port = node['port'];
+		var req = http.request({
+			host: host,
+			port: port,
+			method: 'post',
+			path: '/execute?' + qs
+		}, function (res) {
+			utils.receiveJSON(res, function (err, json) {
+				if (!finished) {
+					finished = true;
+					next(err, json);
+				}
+			});
+		});
+		req.on('error', function (err) {
+			if (!finished) {
+				finished = true;
+				next(err);
+			}
+		});
+		req.end();
+	}, function (err, results) {
+		if (err) {
+			next(err);
+		} else {
+			resolveNodeResults(results, nodes, next);
+		}
 	});
 };
 
@@ -313,6 +368,25 @@ exports.getBuildEnv = function (name, historyId) {
 		BUILD_ID: historyId
 	});
 };
+
+function resolveNodeResults(results, nodes, next) {
+	var output = '';
+	var deployResult = {};
+	if (results) {
+		output = results.map(function (result, i) {
+			result = result || {};
+			if (result['error']) {
+				deployResult['error'] = new Error(result['error']);
+			}
+			var node = nodes[i];
+			var host = node['host'];
+			var msg = result['data'] || result['error_desc'] || result['error'] || '';
+			return '\u001b[1m' + host + ':\u001b[22m\n' + msg;
+		}).join('\n\n');
+	}
+	deployResult['output'] = output;
+	next(null, deployResult);
+}
 
 function runCommand(name, historyId, step, command, next) {
 	if (!command) {
@@ -355,7 +429,7 @@ function runCommand(name, historyId, step, command, next) {
 			};
 		}
 	], function (err) {
-		// fs.remove(commandFile);
+		fs.remove(commandFile);
 		next(err);
 	});
 }

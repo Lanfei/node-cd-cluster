@@ -7,10 +7,13 @@
 			name: '',
 			project: {
 				repo_type: 'none',
-				deploy_nodes: []
+				deploy_nodes: [],
+				operation_scripts: []
 			},
 			backupNode: null,
-			editingNode: null
+			editingNode: null,
+			backupScript: null,
+			editingScript: null
 		},
 		methods: {
 			init: function () {
@@ -23,6 +26,7 @@
 					reqwest(API + '/' + name, function (res) {
 						var data = res['data'];
 						data['deploy_nodes'] = data['deploy_nodes'] || [];
+						data['operation_scripts'] = data['operation_scripts'] || [];
 						self.project = data;
 					});
 				}
@@ -70,6 +74,44 @@
 					this.project['deploy_nodes'].pop();
 				}
 				this.editingNode = null;
+			},
+			addScript: function () {
+				if (!this.editingScript) {
+					var script = {};
+					this.editingScript = script;
+					this.project['operation_scripts'].push(script);
+				}
+			},
+			editScript: function (script) {
+				this.editingScript = script;
+				this.backupScript = utils.extend({}, script);
+			},
+			deleteScript: function (script) {
+				if (confirm(utils.i18n('Are you sure?'))) {
+					this.backupScript = null;
+					this.editingScript = null;
+					this.project['operation_scripts'].$remove(script);
+				}
+			},
+			updateScript: function () {
+				var script = this.editingScript;
+				if (!script['name']) {
+					alert(utils.i18n('Please fill in the name'));
+				} else if (!script['command']) {
+					alert(utils.i18n('Please fill in the script'));
+				} else {
+					this.backupScript = null;
+					this.editingScript = null;
+				}
+			},
+			restoreScript: function () {
+				if (this.backupScript) {
+					utils.extend(this.editingScript, this.backupScript);
+					this.backupScript = null;
+				} else {
+					this.project['operation_scripts'].pop();
+				}
+				this.editingScript = null;
 			},
 			handleSubmit: function (e) {
 				var name = this.name;

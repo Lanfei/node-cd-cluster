@@ -21,6 +21,10 @@ router.post('/projects/:name/build', projectCtrl.buildHandler);
 
 router.post('/projects/:name/abort', projectCtrl.abortHandler);
 
+router.post('/projects/:name/deploy', projectCtrl.deployHandler);
+
+router.post('/projects/:name/execute', projectCtrl.executeHandler);
+
 router.get('/projects/:name/status', projectCtrl.getStatusHandler);
 
 router.get('/projects/:name/histories/:id', projectCtrl.getHistoryHandler);

@@ -29,17 +29,26 @@ exports.deployHandler = function (req, res, next) {
 			utils.checkParams(cwd, next);
 		},
 		function (next) {
-			runCommand(name, historyId, preDeployScripts, cwd, env, next);
+			runCommand('pre-deploy', preDeployScripts, cwd, env, next);
 		},
 		function (output, next) {
 			deployResult += output;
 			var stream = req.pipe(unzip2.Extract({path: cwd}));
-			stream.on('finish', next);
-			stream.on('error', next);
+			var finished = false;
+
+			function callback(err) {
+				if (!finished) {
+					finished = true;
+					next(err);
+				}
+			}
+
+			stream.on('finish', callback);
+			stream.on('error', callback);
 		},
 		function (next) {
 			deployResult += '\nDeploying files...\n\n';
-			runCommand(name, historyId, postDeployScripts, cwd, env, next);
+			runCommand('post-deploy', postDeployScripts, cwd, env, next);
 		},
 		function (output, next) {
 			deployResult += output;
@@ -56,7 +65,36 @@ exports.deployHandler = function (req, res, next) {
 	});
 };
 
-function runCommand(name, historyId, command, cwd, env, next) {
+exports.executeHandler = function (req, res, next) {
+	var cwd = req.query['cwd'];
+	var name = req.query['name'];
+	var command = req.query['command'];
+	var token = req.query['token'] || '';
+	var env = projectModule.getBuildEnv(name);
+	async.waterfall([
+		function (next) {
+			var expected = process.env['TOKEN'] || '';
+			if (expected === token) {
+				next();
+			} else {
+				next(errFactory.unauthorized('Invalid Token'));
+			}
+		},
+		function (next) {
+			runCommand('execute', command, cwd, env, next);
+		}
+	], function (err, output) {
+		if (err) {
+			next(err);
+		} else {
+			res.json({
+				data: output
+			});
+		}
+	});
+};
+
+function runCommand(type, command, cwd, env, next) {
 	if (!command) {
 		next(null, '');
 		return;
@@ -64,7 +102,7 @@ function runCommand(name, historyId, command, cwd, env, next) {
 	var output = command + '\n';
 	var configDir = utils.getConfigDir();
 	var rnd = Math.floor(Math.random() * Date.now());
-	var commandFile = configDir + '/tmp/' + name + '-' + historyId + '-deploy-' + rnd;
+	var commandFile = configDir + '/tmp/' + type + '-' + rnd;
 	async.waterfall([
 		function (next) {
 			fs.outputFile(commandFile, command, next);

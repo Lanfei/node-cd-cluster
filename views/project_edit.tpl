@@ -57,32 +57,32 @@
 				<tr>
 					<td v-text="i18n('Deploy Nodes')" :rowspan="project['deploy_nodes'].length + 1"></td>
 					<td align="left">
-						<a @click="addNode" :disabled="!!editingNode">New Node</a>
+						<a @click="addNode" :disabled="!!editingNode" v-text="i18n('New Node')"></a>
 					</td>
 				</tr>
 				<tr v-for="node in project['deploy_nodes']">
 					<td align="left">
-						<div v-show="node !== editingNode">
+						<template v-if="node !== editingNode">
 							<span v-text="node['host'] + ':' + node['port']"></span>
 							<a class="option" @click="editNode(node)" :disabled="!!editingNode">Edit</a>
 							<a class="option" @click="deleteNode(node)" :disabled="!!editingNode">Delete</a>
-						</div>
-						<div v-show="node === editingNode">
+						</template>
+						<template v-else>
 							<label>
-								Host:<br>
+								<div v-text="i18n('Host:')"></div>
 								<input type="text" v-model="node['host']" required>
 							</label>
 							<label>
-								Port:<br>
+								<div v-text="i18n('Port:')"></div>
 								<input type="number" v-model="node['port']" required>
 							</label>
 							<label>
-								Origin Working Directory:<br>
+								<div v-text="i18n('Origin Working Directory:')"></div>
 								<input type="text" v-model="node['cwd']" required>
 							</label>
 							<button type="button" class="color-info" @click="updateNode">Apply</button>
 							<button type="button" @click="restoreNode">Cancel</button>
-						</div>
+						</template>
 					</td>
 				</tr>
 				<tr>
@@ -98,11 +98,37 @@
 					<td align="left"><textarea v-model="project['post_deploy_scripts']"></textarea></td>
 				</tr>
 				<tr>
+					<td v-text="i18n('Operation Scripts')" :rowspan="project['operation_scripts'].length + 1"></td>
+					<td align="left">
+						<a @click="addScript" :disabled="!!editingScript" v-text="i18n('New Script')"></a>
+					</td>
+				</tr>
+				<tr v-for="item in project['operation_scripts']">
+					<td align="left">
+						<template v-if="editingScript !== item">
+							<span v-text="item['name']"></span>
+							<a class="option" @click="editScript(item)" :disabled="!!editingScript">Edit</a>
+							<a class="option" @click="deleteScript(item)" :disabled="!!editingScript">Delete</a>
+						</template>
+						<template v-else>
+							<label>
+								<div v-text="i18n('Name:')"></div>
+								<input type="text" v-model="item['name']">
+							</label>
+							<label>
+								<div v-text="i18n('Command:')"></div>
+								<textarea v-model="item['command']"></textarea>
+							</label>
+							<button type="button" class="color-info" @click="updateScript">Apply</button>
+							<button type="button" @click="restoreScript">Cancel</button>
+						</template>
+					</td>
+				</tr>
+				<tr v-if="name">
 					<td v-text="i18n('Options')"></td>
 					<td align="left">
-						<button type="button" v-text="i18n('Clean Workspace')" v-if="name"
-								@click="cleanWorkspace"></button>
-						<button type="button" class="color-danger" v-text="i18n('Delete')" v-if="name"
+						<button type="button" v-text="i18n('Clean Workspace')" @click="cleanWorkspace"></button>
+						<button type="button" class="color-danger" v-text="i18n('Delete')"
 								@click="deleteProject"></button>
 					</td>
 				</tr>

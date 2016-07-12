@@ -100,4 +100,13 @@
 		}
 	});
 
+	Vue.filter('command', function (script, length) {
+		script = script.replace(/\n/g, ' ');
+		length = length || 100;
+		if (script.length > length) {
+			script = script.slice(0, length) + '...';
+		}
+		return script;
+	});
+
 })(window);

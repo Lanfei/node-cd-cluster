@@ -1,4 +1,3 @@
-var async = require('async');
 var express = require('express');
 var errFactory = require('../libs/err_factory');
 var slaveCtrl = require('../ctrls/slave');
@@ -6,6 +5,8 @@ var slaveCtrl = require('../ctrls/slave');
 var router = express.Router();
 
 router.post('/deploy', slaveCtrl.deployHandler);
+
+router.post('/execute', slaveCtrl.executeHandler);
 
 router.use(function (req, res, next) {
 	next(errFactory.notFound());

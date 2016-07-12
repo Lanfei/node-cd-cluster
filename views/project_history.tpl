@@ -46,40 +46,40 @@
 				<td v-text="i18n('Checkout Result')"></td>
 				<td align="left">
 					<pre v-html="history['checkout_result']"></pre>
-					<div class="loading"
-						 v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_CHECKOUT"></div>
+					<i class="loading"
+					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_CHECKOUT"></i>
 				</td>
 			</tr>
 			<tr>
 				<td v-text="i18n('Build Result')"></td>
 				<td align="left">
 					<pre v-html="history['build_result']"></pre>
-					<div class="loading"
-						 v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_BUILD"></div>
+					<i class="loading"
+					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_BUILD"></i>
 				</td>
 			</tr>
 			<tr>
 				<td v-text="i18n('Test Result')"></td>
 				<td align="left">
 					<pre v-html="history['test_result']"></pre>
-					<div class="loading"
-						 v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_TEST"></div>
+					<i class="loading"
+					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_TEST"></i>
 				</td>
 			</tr>
 			<tr>
 				<td v-text="i18n('Pack Result')"></td>
 				<td align="left">
 					<pre v-html="history['pack_result']"></pre>
-					<div class="loading"
-						 v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_PACK"></div>
+					<i class="loading"
+					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_PACK"></i>
 				</td>
 			</tr>
 			<tr>
 				<td v-text="i18n('Deploy Result')"></td>
 				<td align="left">
 					<pre v-html="history['deploy_result']"></pre>
-					<div class="loading"
-						 v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_DEPLOY"></div>
+					<i class="loading"
+					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_DEPLOY"></i>
 				</td>
 			</tr>
 			</tbody>

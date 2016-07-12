@@ -9,9 +9,9 @@
 <%- include('header') %>
 <div id="main">
 	<div class="toolbar">
-		<button @click="back">Back</button>
+		<button @click="back" v-text="i18n('Back')"></button>
 	</div>
-	<h3 class="sub-title">Project Info</h3>
+	<h3 class="sub-title" v-text="i18n('Project Info')"></h3>
 	<div class="table-wrapper">
 		<table>
 			<thead>
@@ -36,7 +36,28 @@
 			</tbody>
 		</table>
 	</div>
-	<h3 class="sub-title">Build Histories</h3>
+	<h3 class="sub-title" v-text="i18n('Operation Scripts')"></h3>
+	<div class="table-wrapper">
+		<table>
+			<thead>
+			<tr>
+				<th v-text="i18n('Name')"></th>
+				<th v-text="i18n('Script')"></th>
+				<th v-text="i18n('Options')"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr v-for="script in project['operation_scripts']">
+				<td v-text="script['name']"></td>
+				<td v-text="script['command'] | command"></td>
+				<td>
+					<a class="option" @click="executeScript($index)" v-text="i18n('Execute')"></a>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<h3 class="sub-title" v-text="i18n('Build Histories')"></h3>
 	<div class="table-wrapper">
 		<table>
 			<thead>
@@ -61,11 +82,23 @@
 					   :href="'/projects/' + project['name'] + '/histories/' + $key"></a>
 				</td>
 				<td>
-					<a :href="history['build_url']" v-if="history['build_url']" v-text="i18n('Download')"></a>
+					<template v-if="history['build_url']">
+						<a class="option" :href="history['build_url']" v-text="i18n('Download')"></a>
+						<a class="option" @click="deploy($key)" v-if="project['deploy_nodes']"
+						   v-text="i18n('Revert')"></a>
+					</template>
 				</td>
 			</tr>
 			</tbody>
 		</table>
+	</div>
+	<div class="dialog" :style="{display: executing || executionResult ? 'block' : null}">
+		<div class="title" v-text="i18n('Execution Result')"></div>
+		<button class="close" @click="closeDialog" v-text="i18n('Close')"></button>
+		<div class="content">
+			<pre v-html="executionResult"></pre>
+			<i class="loading" v-if="executing"></i>
+		</div>
 	</div>
 </div>
 <script src="/js/libs/vue.js"></script>
