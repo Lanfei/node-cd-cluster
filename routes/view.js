@@ -41,7 +41,11 @@ router.use(function (err, req, res, next) {
 		err = errFactory.unknownError(err.message, err.stack);
 	}
 	res.status(err.status);
-	res.end(err.stack);
+	if (err.status >= 500) {
+		res.end(err.stack);
+	} else {
+		res.end(err.desc || err.message);
+	}
 	next(err);
 });
 

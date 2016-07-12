@@ -30,14 +30,10 @@ exports.downBuildPackHandler = function (req, res, next) {
 	var id = req.params['id'];
 	var name = req.params['name'];
 	var filename = name + '-' + id + '.zip';
-	var zipPath = projectModule.getZipPath(name, id);
-	fs.access(zipPath, function (err) {
+	var zipPath = historyModule.getBuildPath(name, id);
+	res.download(zipPath, filename, function (err) {
 		if (err) {
 			next();
-		} else {
-			res.header('Content-Type', 'application/zip');
-			res.header('Content-Disposition', 'attachment;filename=' + filename);
-			res.download(projectModule.getZipPath(name, id));
 		}
 	});
 };

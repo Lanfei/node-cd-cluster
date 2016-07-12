@@ -429,6 +429,7 @@ function runCommand(name, historyId, step, command, next) {
 			};
 		}
 	], function (err) {
+		delete tasks[name];
 		fs.remove(commandFile);
 		next(err);
 	});

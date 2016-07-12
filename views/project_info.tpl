@@ -92,6 +92,7 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="mask" :style="{display: executing || executionResult ? 'block' : null}"></div>
 	<div class="dialog" :style="{display: executing || executionResult ? 'block' : null}">
 		<div class="title" v-text="i18n('Execution Result')"></div>
 		<button class="close" @click="closeDialog" v-text="i18n('Close')"></button>

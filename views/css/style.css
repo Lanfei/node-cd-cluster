@@ -239,9 +239,22 @@ tr:last-child td {
 	background: #d57b81;
 }
 
+.mask {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	opacity: .5;
+	display: none;
+	position: fixed;
+	background: #000;
+}
+
 .dialog {
 	top: 50%;
 	left: 50%;
+	z-index: 3;
 	width: 500px;
 	height: 500px;
 	display: none;
