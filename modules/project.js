@@ -120,17 +120,28 @@ exports.buildProject = function (name, next) {
 		function (made, next) {
 			var command;
 			var repoType = project['repo_type'];
+			var repoUrl = project['repo_url'];
+			var repoBranch = project['repo_branch'] || 'master';
 			if (repoType === 'git') {
 				if (made) {
-					var repoUrl = project['repo_url'];
-					var branch = project['repo_branch'] || 'master';
-					command = 'git clone --progress --depth 1 -b ' + branch + ' ' + repoUrl + ' ./';
+					command = 'git clone --progress --depth 1 -b ' + repoBranch + ' ' + repoUrl + ' ./';
 				} else {
 					command = 'git pull';
 				}
+			} else if (repoType === 'svn') {
+				if (made) {
+					command = 'svn co ' + repoUrl + ' ./';
+				} else {
+					command = 'svn up';
+				}
 			}
 			history['step'] = historyModule.STEP_CHECKOUT;
-			runCommand(name, historyId, history['step'], command, next);
+			runCommand(name, historyId, history['step'], command, function (err) {
+				if (err) {
+					exports.cleanWorkspace(name);
+				}
+				next(err);
+			});
 		},
 		function (next) {
 			history['step'] = historyModule.STEP_BUILD;

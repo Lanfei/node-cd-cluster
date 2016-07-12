@@ -42,7 +42,7 @@
 			<thead>
 			<tr>
 				<th v-text="i18n('Name')"></th>
-				<th v-text="i18n('Script')"></th>
+				<th v-text="i18n('Command')"></th>
 				<th v-text="i18n('Options')"></th>
 			</tr>
 			</thead>
