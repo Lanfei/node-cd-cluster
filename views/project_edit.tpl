@@ -80,6 +80,10 @@
 								<div v-text="i18n('Origin Working Directory:')"></div>
 								<input type="text" v-model="node['cwd']" required>
 							</label>
+							<label>
+								<div v-text="i18n('Token:')"></div>
+								<input type="text" v-model="node['token']">
+							</label>
 							<button type="button" class="color-info" @click="updateNode">Apply</button>
 							<button type="button" @click="restoreNode">Cancel</button>
 						</template>

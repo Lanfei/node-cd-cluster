@@ -271,8 +271,8 @@ exports.deployProject = function (name, historyId, next) {
 			name: name,
 			cwd: node['cwd'],
 			host: node['host'],
+			token: node['token'],
 			history_id: historyId,
-			token: project['deploy_token'],
 			pre_deploy_scripts: project['pre_deploy_scripts'],
 			post_deploy_scripts: project['post_deploy_scripts']
 		};
@@ -323,9 +323,9 @@ exports.executeScript = function (name, scriptId, next) {
 			name: name,
 			cwd: node['cwd'],
 			host: node['host'],
+			token: node['token'],
 			script_id: scriptId,
-			command: script['command'],
-			token: project['deploy_token']
+			command: script['command']
 		};
 		var finished = false;
 		var qs = querystring.stringify(data);
@@ -382,21 +382,21 @@ exports.getBuildEnv = function (name, historyId) {
 
 function resolveNodeResults(results, nodes, next) {
 	var output = '';
-	var deployResult = {};
+	var result = {};
 	if (results) {
-		output = results.map(function (result, i) {
-			result = result || {};
-			if (result['error']) {
-				deployResult['error'] = new Error(result['error']);
+		output = results.map(function (res, i) {
+			res = res || {};
+			if (res['error']) {
+				result['error'] = new Error(res['error']);
 			}
 			var node = nodes[i];
 			var host = node['host'];
-			var msg = result['data'] || result['error_desc'] || result['error'] || '';
+			var msg = res['data'] || res['error_desc'] || res['error'] || '';
 			return '\u001b[1m' + host + ':\u001b[22m\n' + msg;
 		}).join('\n\n');
 	}
-	deployResult['output'] = output;
-	next(null, deployResult);
+	result['output'] = output;
+	next(null, result);
 }
 
 function runCommand(name, historyId, step, command, next) {
