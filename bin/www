@@ -6,7 +6,7 @@ var port = +process.env['PORT'];
 var server = http.createServer(require('../app'));
 
 server.on('listening', function () {
-	console.log('Listening on ' + port);
+	console.log('Listening on ' + server.address().port);
 });
 
 server.on('error', function (err) {

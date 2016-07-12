@@ -54,6 +54,13 @@ exports.updateProject = function (name, data, next) {
 			} else {
 				next();
 			}
+		},
+		function (next) {
+			if (shouldCleanWorkspace) {
+				exports.abortProject(name, next);
+			} else {
+				next();
+			}
 		}
 	], function (err) {
 		next && next(err);
@@ -132,6 +139,9 @@ exports.buildProject = function (name, next) {
 		},
 		function (next) {
 			history['step'] = historyModule.STEP_PACK;
+			historyModule.writeOutput(name, historyId, history['step'], 'Creating zip file...\n', next);
+		},
+		function (next) {
 			exports.packProject(name, historyId, project['ignores'], next);
 		},
 		function (next) {
@@ -143,14 +153,16 @@ exports.buildProject = function (name, next) {
 			exports.deployProject(name, historyId, next);
 		},
 		function (result, next) {
-			historyModule.writeOutput(name, historyId, history['step'], result, next);
+			historyModule.writeOutput(name, historyId, history['step'], result['output'], function (err) {
+				next(result['error'] || err);
+			});
 		}
 	], function (err) {
 		var startTime = history['start_time'];
 		history['duration'] = Date.now() - startTime;
 		if (err) {
 			history['status'] = historyModule.STATUS_FAILED;
-			historyModule.writeOutput(name, historyId, history['step'], '\n' + err.stack);
+			historyModule.writeOutput(name, historyId, history['step'], '\n' + err.message);
 		} else {
 			history['status'] = historyModule.STATUS_SUCCESS;
 		}
@@ -193,9 +205,6 @@ exports.packProject = function (name, historyId, ignores, next) {
 		return;
 	}
 	async.waterfall([
-		function (next) {
-			historyModule.writeOutput(name, historyId, historyModule.STEP_PACK, 'Creating zip file...\n', next);
-		},
 		function (next) {
 			fs.ensureDir(path.dirname(zipPath), next);
 		},
@@ -267,18 +276,20 @@ exports.deployProject = function (name, historyId, next) {
 		req.on('error', next);
 		stream.pipe(req);
 	}, function (err, results) {
-		var deployResult = '';
+		var output = '';
+		var deployResult = {};
 		if (results) {
-			deployResult = results.map(function (result, i) {
+			output = results.map(function (result, i) {
 				result = result || {};
 				if (result['error']) {
-					err = new Error(result['error_desc']);
+					deployResult['error'] = new Error('Deployment Failed');
 				}
 				var node = nodes[i];
 				var host = node['host'];
 				return '\u001b[1m' + host + ':\u001b[22m\n' + (result['data'] || result['error_desc'] || '');
 			}).join('\n\n');
 		}
+		deployResult['output'] = output;
 		next(err, deployResult);
 	});
 };
@@ -297,10 +308,10 @@ exports.getWorkspace = function (name) {
 };
 
 exports.getBuildEnv = function (name, historyId) {
-	return {
+	return utils.extend({}, process.env, {
 		PROJECT_NAME: name,
 		BUILD_ID: historyId
-	};
+	});
 };
 
 function runCommand(name, historyId, step, command, next) {
@@ -344,7 +355,7 @@ function runCommand(name, historyId, step, command, next) {
 			};
 		}
 	], function (err) {
-		fs.remove(commandFile);
+		// fs.remove(commandFile);
 		next(err);
 	});
 }

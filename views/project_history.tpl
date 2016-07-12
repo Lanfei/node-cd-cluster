@@ -36,7 +36,7 @@
 				<td v-text="i18n('Duration')"></td>
 				<td v-text="history['duration'] | duration" align="left"></td>
 			</tr>
-			<tr v-if="history['duration']">
+			<tr v-if="history['build_url']">
 				<td v-text="i18n('Build Pack')"></td>
 				<td align="left">
 					<a :href="history['build_url']" v-text="i18n('Download')"></a>
