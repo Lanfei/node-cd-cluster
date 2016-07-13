@@ -166,7 +166,7 @@ exports.buildProject = function (name, next) {
 		},
 		function (next) {
 			history['build_url'] = historyModule.getBuildUrl(name, historyId);
-			historyModule.writeOutput(name, historyId, step, 'Done.', next);
+			historyModule.writeOutput(name, historyId, step, '\nDone.', next);
 		},
 		function (next) {
 			step = 'deploy';
@@ -181,7 +181,7 @@ exports.buildProject = function (name, next) {
 		history['duration'] = Date.now() - startTime;
 		if (err) {
 			history['status'] = historyModule.STATUS_FAILED;
-			historyModule.writeOutput(name, historyId, step, (err.desc || err.message) + '\n\n' + '\u001b[31mFailed\u001b[39m');
+			historyModule.writeOutput(name, historyId, step, (err.desc || err.message) + '\n' + '\u001b[31mFailed.\u001b[39m');
 		} else {
 			history['status'] = historyModule.STATUS_SUCCESS;
 		}
@@ -390,20 +390,17 @@ function resolveNodeResults(results, nodes, next) {
 	var failed = false;
 	if (results) {
 		output = results.map(function (res, i) {
-			var msg;
+			var msg = '';
 			var node = nodes[i];
 			var host = node['host'];
-			if (!res) {
-				msg = '';
-			} else if (res['error']) {
+			if (res && res['data']) {
+				msg += res['data'];
+			}
+			if (res && res['error']) {
 				failed = true;
-				msg = res['error'] + '\n' + res['error_desc'];
+				msg += '\n' + res['error_desc'] || res['error'];
 			}
-			if (res['data']) {
-				msg += '\n' + res['data'];
-			}
-			console.log(res);
-			return '\u001b[1m' + host + ':\u001b[22m\n' + msg + '\n';
+			return '\u001b[1m' + host + ':\u001b[22m\n' + msg;
 		}).join('\n\n');
 	}
 	if (failed) {

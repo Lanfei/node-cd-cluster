@@ -1,5 +1,6 @@
 var fs = require('fs');
 var express = require('express');
+var color2html = require('color2html');
 var errFactory = require('../libs/err_factory');
 var projectCtrl = require('../ctrls/project');
 
@@ -40,7 +41,7 @@ router.use(function (err, req, res, next) {
 	res.status(err.status);
 	res.json({
 		error: err.message,
-		error_desc: err.desc
+		error_desc: color2html(err.desc)
 	});
 	next(err);
 });

@@ -205,7 +205,7 @@ exports.deployHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: color2html(result['output'])
+				data: color2html(result)
 			});
 		}
 	});
