@@ -4,9 +4,13 @@
 	<meta charset="UTF-8">
 	<title>CD Cluster</title>
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="/css/iconfont.css">
 </head>
 <body>
-<%- include('header') %>
+<%- include('sidebar') %>
+<div id="header">
+	<h2 id="title">PROJECTS</h2>
+</div>
 <div id="main">
 	<div id="toolbar">
 		<button>Add Project</button>

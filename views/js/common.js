@@ -41,14 +41,17 @@
 			curPage: '',
 			menus: [{
 				name: 'index',
+				icon: 'dashboard',
 				label: 'Dashboard',
 				link: '/'
 			}, {
 				name: 'projects',
+				icon: 'project',
 				label: 'Projects',
 				link: '/projects'
 			}, {
 				name: 'users',
+				icon: 'user',
 				label: 'Users',
 				link: '/users'
 			}]

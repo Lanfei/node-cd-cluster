@@ -3,11 +3,14 @@ var url = require('url');
 var path = require('path');
 var express = require('express');
 var errFactory = require('../libs/err_factory');
+var indexCtrl = require('../ctrls/index');
 var projectCtrl = require('../ctrls/project');
 
 var router = express.Router();
 
 var VIEWS_DIR = router.VIEWS_DIR = path.join(__dirname, '../views');
+
+router.get('/', indexCtrl.getViewHandler);
 
 router.get('/projects', projectCtrl.getListViewHandler);
 

@@ -4,9 +4,13 @@
 	<meta charset="UTF-8">
 	<title>CD Cluster</title>
 	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/iconfont.css">
 </head>
 <body>
-<%- include('header') %>
+<%- include('sidebar') %>
+<div id="header">
+	<h2 id="title">PROJECTS</h2>
+</div>
 <div id="main">
 	<div class="toolbar">
 		<button @click="addProject">Add Project</button>
@@ -49,6 +53,6 @@
 <script src="/js/libs/vue.js"></script>
 <script src="/js/libs/reqwest.min.js"></script>
 <script src="/js/common.js"></script>
-<script src="/js/projects.js"></script>
+<script src="/js/project_list.js"></script>
 </body>
 </html>

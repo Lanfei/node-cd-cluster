@@ -10,19 +10,19 @@ var AVAILABLE_FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_s
 
 var projects = projectModule.projects;
 
-exports.getListViewHandler = function (req, res, next) {
-	res.render('projects');
+exports.getListViewHandler = function (req, res) {
+	res.render('project_list');
 };
 
-exports.getInfoViewHandler = function (req, res, next) {
+exports.getInfoViewHandler = function (req, res) {
 	res.render('project_info');
 };
 
-exports.getEditViewHandler = function (req, res, next) {
+exports.getEditViewHandler = function (req, res) {
 	res.render('project_edit');
 };
 
-exports.getHistoryViewHandler = function (req, res, next) {
+exports.getHistoryViewHandler = function (req, res) {
 	res.render('project_history', req.params);
 };
 
@@ -38,7 +38,7 @@ exports.downBuildPackHandler = function (req, res, next) {
 	});
 };
 
-exports.getHandler = function (req, res, next) {
+exports.getHandler = function (req, res) {
 	res.json({
 		data: projects
 	});
@@ -72,7 +72,7 @@ exports.postHandler = function (req, res, next) {
 	});
 };
 
-exports.getItemHandler = function (req, res, next) {
+exports.getItemHandler = function (req, res) {
 	var name = req.params['name'];
 	var project = projectModule.getProject(name);
 	res.json({

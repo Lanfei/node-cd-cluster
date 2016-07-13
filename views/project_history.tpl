@@ -6,7 +6,10 @@
 	<link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<%- include('header') %>
+<%- include('sidebar') %>
+<div id="header">
+	<h2 id="title">PROJECTS</h2>
+</div>
 <div id="main">
 	<div class="toolbar">
 		<button @click="back">Back</button>

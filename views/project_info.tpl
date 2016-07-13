@@ -4,9 +4,13 @@
 	<meta charset="UTF-8">
 	<title>CD Cluster</title>
 	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/iconfont.css">
 </head>
 <body>
-<%- include('header') %>
+<%- include('sidebar') %>
+<div id="header">
+	<h2 id="title">PROJECTS</h2>
+</div>
 <div id="main">
 	<div class="toolbar">
 		<button @click="back" v-text="i18n('Back')"></button>
@@ -95,7 +99,7 @@
 	<div class="mask" :style="{display: executing || executionResult ? 'block' : null}"></div>
 	<div class="dialog" :style="{display: executing || executionResult ? 'block' : null}">
 		<div class="title" v-text="i18n('Execution Result')"></div>
-		<button class="close" @click="closeDialog" v-text="i18n('Close')"></button>
+		<a class="close" @click="closeDialog"><i class="iconfont icon-close"></i></a>
 		<div class="content">
 			<pre v-html="executionResult"></pre>
 			<i class="loading" v-if="executing"></i>
