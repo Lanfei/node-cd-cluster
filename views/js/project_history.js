@@ -8,7 +8,7 @@
 			name: '',
 			history: {},
 			STATUS_INITIAL: 0,
-			STATUS_PREPARING: 1,
+			STATUS_UPDATING: 1,
 			STATUS_BUILDING: 2,
 			STATUS_TESTING: 3,
 			STATUS_PACKING: 4,
@@ -29,7 +29,7 @@
 				reqwest(API + '/' + name + '/histories/' + id, function (res) {
 					var history = self.history = res['data'];
 					var status = history['status'];
-					if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
+					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						self.checkStatus();
 					}
 				});
@@ -53,7 +53,7 @@
 								window.scrollTo(window.scrollX, document.body.scrollHeight);
 							});
 						}
-						if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
+						if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 							setTimeout(function () {
 								self.checkStatus();
 							}, 1000);

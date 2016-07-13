@@ -113,7 +113,7 @@
 	});
 
 	Vue.filter('statusStr', function (status) {
-		return utils.i18n(['Initial', 'Preparing', 'Building', 'Testing', 'Packing', 'Deploying', 'Success', 'Failed', 'Aborted'][status]);
+		return utils.i18n(['Initial', 'Updating', 'Building', 'Testing', 'Packing', 'Deploying', 'Success', 'Failed', 'Aborted'][status]);
 	});
 
 	Vue.filter('statusColor', function (status) {

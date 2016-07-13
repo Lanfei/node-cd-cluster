@@ -138,7 +138,7 @@ exports.buildProject = function (name, next) {
 				}
 			}
 			step = 'checkout';
-			history['status'] = historyModule.STATUS_PREPARING;
+			history['status'] = historyModule.STATUS_UPDATING;
 			runCommand(name, historyId, step, command, function (err) {
 				if (err) {
 					exports.cleanWorkspace(name);
@@ -197,16 +197,25 @@ exports.abortProject = function (name, next) {
 		var histories = project['histories'];
 		var historyId = task['id'];
 		var process = task['process'];
+		var archive = task['archive'];
 		var history = histories[historyId];
-		if (process.killed || process.exitCode !== null) {
-			next();
-		} else {
-			process.kill();
-			process.on('exit', function () {
+		if (archive) {
+			archive.abort();
+			history['status'] = historyModule.STATUS_ABORTED;
+		} else if (process) {
+			if (process.killed || process.exitCode !== null) {
 				history['status'] = historyModule.STATUS_ABORTED;
-				exports.updateProject(name, project);
 				next();
-			});
+			} else {
+				process.kill();
+				process.on('exit', function () {
+					history['status'] = historyModule.STATUS_ABORTED;
+					exports.updateProject(name, project);
+					next();
+				});
+			}
+		} else {
+			history['status'] = historyModule.STATUS_ABORTED;
 		}
 		delete tasks[name];
 	} else {
@@ -218,6 +227,7 @@ exports.packProject = function (name, historyId, ignores, next) {
 	var zipPath = historyModule.getBuildPath(name, historyId);
 	var workspace = exports.getWorkspace(name);
 	var project = exports.getProject(name);
+	var task = tasks[name];
 	if (!project) {
 		next();
 		return;
@@ -240,6 +250,12 @@ exports.packProject = function (name, historyId, ignores, next) {
 					return item;
 				});
 			}
+			if (!task) {
+				task = tasks[name] = {
+					id: historyId,
+					archive: archive
+				};
+			}
 			try {
 				archive.bulk([
 					{
@@ -258,7 +274,12 @@ exports.packProject = function (name, historyId, ignores, next) {
 				output.end();
 			}
 		}
-	], next);
+	], function (err) {
+		if (task['archive']) {
+			delete tasks[name];
+		}
+		next(err);
+	});
 };
 
 exports.deployProject = function (name, historyId, next) {
@@ -440,7 +461,7 @@ function runCommand(name, historyId, step, command, next) {
 			p.on('close', function (code) {
 				if (!finished) {
 					finished = true;
-					if (code !== 0) {
+					if (code) {
 						next(errFactory.runtimeError('Process exited with code ' + code));
 					} else {
 						next();
@@ -459,8 +480,10 @@ function runCommand(name, historyId, step, command, next) {
 			};
 		}
 	], function (err) {
-		delete tasks[name];
 		fs.remove(commandFile);
-		next(err);
+		if (tasks[name]) {
+			delete tasks[name];
+			next(err);
+		}
 	});
 }

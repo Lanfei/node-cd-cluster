@@ -3,7 +3,7 @@ var async = require('async');
 var utils = require('../libs/utils');
 
 exports.STATUS_INITIAL = 0;
-exports.STATUS_PREPARING = 1;
+exports.STATUS_UPDATING = 1;
 exports.STATUS_BUILDING = 2;
 exports.STATUS_TESTING = 3;
 exports.STATUS_PACKING = 4;

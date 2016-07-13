@@ -49,7 +49,7 @@
 				<td align="left">
 					<pre v-html="history['checkout_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_PREPARING"></i>
+					   v-if="history['status'] === STATUS_UPDATING"></i>
 				</td>
 			</tr>
 			<tr>

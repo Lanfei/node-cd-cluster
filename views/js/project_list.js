@@ -6,7 +6,7 @@
 		data: {
 			projects: [],
 			STATUS_INITIAL: 0,
-			STATUS_PREPARING: 1,
+			STATUS_UPDATING: 1,
 			STATUS_BUILDING: 2,
 			STATUS_TESTING: 3,
 			STATUS_PACKING: 4,
@@ -22,14 +22,14 @@
 				var self = this;
 				reqwest(API, function (res) {
 					var projects = res['data'];
-					projects.forEach(function (project) {
+					self.projects = projects;
+					projects.forEach(function (project, i) {
 						self.formatProject(project);
 						var status = project['status'];
-						if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
-							self.checkStatus(project);
+						if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
+							self.checkStatus(i);
 						}
 					});
-					self.projects = projects;
 				});
 			},
 			addProject: function () {
@@ -48,7 +48,7 @@
 					success: function (res) {
 						var project = res['data'];
 						projects.splice(index, 1, self.formatProject(project));
-						self.checkStatus(project);
+						self.checkStatus(index);
 					},
 					error: function (err) {
 						console.log(err);
@@ -65,7 +65,6 @@
 					success: function (res) {
 						var project = res['data'];
 						projects.splice(index, 1, self.formatProject(project));
-						self.checkStatus(project);
 					},
 					error: function (err) {
 						console.log(err);
@@ -81,17 +80,19 @@
 				project['status'] = latestHistory['status'] || this.STATUS_INITIAL;
 				return project;
 			},
-			checkStatus: function (project) {
+			checkStatus: function (index) {
 				var self = this;
+				var projects = this.projects;
+				var project = projects[index];
 				var name = project['name'];
 				reqwest(API + '/' + name + '/status', function (res) {
 					var data = res['data'];
 					var status = project['status'] = data['status'];
 					project['last_build'] = data['start_time'];
 					project['last_duration'] = data['duration'];
-					if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
+					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
-							self.checkStatus(project);
+							self.checkStatus(index);
 						}, 1000);
 					}
 				});

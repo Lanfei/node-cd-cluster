@@ -122,7 +122,7 @@ function runCommand(type, command, cwd, env, next) {
 			p.on('close', function (code) {
 				if (!finished) {
 					finished = true;
-					if (code !== 0) {
+					if (code) {
 						next(errFactory.runtimeError(output + '\nProcess exited with code ' + code));
 					} else {
 						next();

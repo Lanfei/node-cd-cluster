@@ -85,7 +85,9 @@
 					   :href="'/projects/' + project['name'] + '/histories/' + $key"></a>
 				</td>
 				<td>
-					<template v-if="history['build_url']">
+					<a class="option" @click="abort" v-text="i18n('Abort')"
+					   v-if="history['status'] >= STATUS_INITIAL && history['status'] <= STATUS_DEPLOYING"></a>
+					<template v-if="history['build_url']" v-else>
 						<a class="option" :href="history['build_url']" v-text="i18n('Download')"></a>
 						<a class="option" @click="deploy($key)" v-if="project['deploy_nodes']"
 						   v-text="i18n('Revert')"></a>
