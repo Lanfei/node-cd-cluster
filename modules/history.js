@@ -3,16 +3,14 @@ var async = require('async');
 var utils = require('../libs/utils');
 
 exports.STATUS_INITIAL = 0;
-exports.STATUS_BUILDING = 1;
-exports.STATUS_SUCCESS = 2;
-exports.STATUS_FAILED = 3;
-exports.STATUS_ABORTED = 4;
-
-exports.STEP_CHECKOUT = 'checkout';
-exports.STEP_BUILD = 'build';
-exports.STEP_TEST = 'test';
-exports.STEP_PACK = 'pack';
-exports.STEP_DEPLOY = 'deploy';
+exports.STATUS_PREPARING = 1;
+exports.STATUS_BUILDING = 2;
+exports.STATUS_TESTING = 3;
+exports.STATUS_PACKING = 4;
+exports.STATUS_DEPLOYING = 5;
+exports.STATUS_SUCCESS = 6;
+exports.STATUS_FAILED = 7;
+exports.STATUS_ABORTED = 8;
 
 exports.getHistoryDir = function (name, id) {
 	var dir = utils.getConfigDir() + '/histories/' + name;

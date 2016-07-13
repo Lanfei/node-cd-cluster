@@ -8,10 +8,14 @@
 			executing: false,
 			executionResult: null,
 			STATUS_INITIAL: 0,
-			STATUS_BUILDING: 1,
-			STATUS_SUCCESS: 2,
-			STATUS_FAILED: 3,
-			STATUS_ABORTED: 4
+			STATUS_PREPARING: 1,
+			STATUS_BUILDING: 2,
+			STATUS_TESTING: 3,
+			STATUS_PACKING: 4,
+			STATUS_DEPLOYING: 5,
+			STATUS_SUCCESS: 6,
+			STATUS_FAILED: 7,
+			STATUS_ABORTED: 8
 		},
 		methods: {
 			init: function () {
@@ -22,9 +26,34 @@
 				var name = params['name'];
 				if (name) {
 					reqwest(API + '/' + name, function (res) {
-						self.project = res['data'];
+						var project = res['data'];
+						var histories = project['histories'];
+						var historyLength = project['history_length'];
+						var latestHistory = histories[historyLength] || {};
+						var status = latestHistory['status'];
+						self.project = project;
+						if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
+							self.checkStatus();
+						}
 					});
 				}
+			},
+			checkStatus: function () {
+				var self = this;
+				var project = this.project;
+				var name = project['name'];
+				reqwest(API + '/' + name + '/status', function (res) {
+					var data = res['data'];
+					var status = data['status'];
+					var histories = project['histories'];
+					var historyLength = project['history_length'];
+					histories[historyLength] = data;
+					if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
+						setTimeout(function () {
+							self.checkStatus(project);
+						}, 1000);
+					}
+				});
 			},
 			back: function () {
 				history.back();

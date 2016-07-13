@@ -95,6 +95,7 @@ exports.deleteProject = function (name, next) {
 
 exports.buildProject = function (name, next) {
 	var project = exports.getProject(name);
+	var step;
 	var history;
 	var historyId;
 	if (!project) {
@@ -135,8 +136,9 @@ exports.buildProject = function (name, next) {
 					command = 'svn up';
 				}
 			}
-			history['step'] = historyModule.STEP_CHECKOUT;
-			runCommand(name, historyId, history['step'], command, function (err) {
+			step = 'checkout';
+			history['status'] = historyModule.STATUS_PREPARING;
+			runCommand(name, historyId, step, command, function (err) {
 				if (err) {
 					exports.cleanWorkspace(name);
 				}
@@ -144,30 +146,34 @@ exports.buildProject = function (name, next) {
 			});
 		},
 		function (next) {
-			history['step'] = historyModule.STEP_BUILD;
-			runCommand(name, historyId, history['step'], project['build_scripts'], next);
+			step = 'build';
+			history['status'] = historyModule.STATUS_BUILDING;
+			runCommand(name, historyId, step, project['build_scripts'], next);
 		},
 		function (next) {
-			history['step'] = historyModule.STEP_TEST;
-			runCommand(name, historyId, history['step'], project['test_scripts'], next);
+			step = 'test';
+			history['status'] = historyModule.STATUS_TESTING;
+			runCommand(name, historyId, step, project['test_scripts'], next);
 		},
 		function (next) {
-			history['step'] = historyModule.STEP_PACK;
-			historyModule.writeOutput(name, historyId, history['step'], 'Creating zip file...\n', next);
+			step = 'pack';
+			history['status'] = historyModule.STATUS_PACKING;
+			historyModule.writeOutput(name, historyId, step, 'Creating zip file...\n', next);
 		},
 		function (next) {
 			exports.packProject(name, historyId, project['ignores'], next);
 		},
 		function (next) {
 			history['build_url'] = historyModule.getBuildUrl(name, historyId);
-			historyModule.writeOutput(name, historyId, history['step'], 'Done.', next);
+			historyModule.writeOutput(name, historyId, step, 'Done.', next);
 		},
 		function (next) {
-			history['step'] = historyModule.STEP_DEPLOY;
+			step = 'deploy';
+			history['status'] = historyModule.STATUS_DEPLOYING;
 			exports.deployProject(name, historyId, next);
 		},
 		function (result, next) {
-			historyModule.writeOutput(name, historyId, history['step'], result['output'], function (err) {
+			historyModule.writeOutput(name, historyId, step, result['output'], function (err) {
 				next(result['error'] || err);
 			});
 		}
@@ -176,11 +182,10 @@ exports.buildProject = function (name, next) {
 		history['duration'] = Date.now() - startTime;
 		if (err) {
 			history['status'] = historyModule.STATUS_FAILED;
-			historyModule.writeOutput(name, historyId, history['step'], '\n' + err.message);
+			historyModule.writeOutput(name, historyId, step, '\n' + err.message);
 		} else {
 			history['status'] = historyModule.STATUS_SUCCESS;
 		}
-		history['step'] = undefined;
 		exports.updateProject(name, project);
 		next && next(err);
 	});

@@ -43,4 +43,8 @@ app.use(function (err, req, res, next) {
 	next();
 });
 
+process.on('uncaughtException', function (e) {
+	logger.writeError(e);
+});
+
 module.exports = app;

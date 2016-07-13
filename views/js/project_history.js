@@ -8,15 +8,14 @@
 			name: '',
 			history: {},
 			STATUS_INITIAL: 0,
-			STATUS_BUILDING: 1,
-			STATUS_SUCCESS: 2,
-			STATUS_FAILED: 3,
-			STATUS_ABORTED: 4,
-			STEP_CHECKOUT: 'checkout',
-			STEP_BUILD: 'build',
-			STEP_TEST: 'test',
-			STEP_PACK: 'pack',
-			STEP_DEPLOY: 'deploy'
+			STATUS_PREPARING: 1,
+			STATUS_BUILDING: 2,
+			STATUS_TESTING: 3,
+			STATUS_PACKING: 4,
+			STATUS_DEPLOYING: 5,
+			STATUS_SUCCESS: 6,
+			STATUS_FAILED: 7,
+			STATUS_ABORTED: 8
 		},
 		methods: {
 			init: function () {
@@ -29,7 +28,8 @@
 
 				reqwest(API + '/' + name + '/histories/' + id, function (res) {
 					var history = self.history = res['data'];
-					if (history['status'] === self.STATUS_BUILDING) {
+					var status = history['status'];
+					if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
 						self.checkStatus();
 					}
 				});
@@ -46,13 +46,14 @@
 					url: API + '/' + name + '/histories/' + id,
 					success: function (res) {
 						var data = res['data'];
+						var status = data['status'];
 						if (JSON.stringify(self.history) !== JSON.stringify(data)) {
 							self.history = data;
 							Vue.nextTick(function () {
 								window.scrollTo(window.scrollX, document.body.scrollHeight);
 							});
 						}
-						if (data['status'] === self.STATUS_BUILDING) {
+						if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
 							setTimeout(function () {
 								self.checkStatus();
 							}, 1000);

@@ -6,10 +6,14 @@
 		data: {
 			projects: [],
 			STATUS_INITIAL: 0,
-			STATUS_BUILDING: 1,
-			STATUS_SUCCESS: 2,
-			STATUS_FAILED: 3,
-			STATUS_ABORTED: 4
+			STATUS_PREPARING: 1,
+			STATUS_BUILDING: 2,
+			STATUS_TESTING: 3,
+			STATUS_PACKING: 4,
+			STATUS_DEPLOYING: 5,
+			STATUS_SUCCESS: 6,
+			STATUS_FAILED: 7,
+			STATUS_ABORTED: 8
 		},
 		methods: {
 			init: function () {
@@ -20,7 +24,8 @@
 					var projects = res['data'];
 					projects.forEach(function (project) {
 						self.formatProject(project);
-						if (project['status'] === self.STATUS_BUILDING) {
+						var status = project['status'];
+						if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
 							self.checkStatus(project);
 						}
 					});
@@ -84,7 +89,7 @@
 					var status = project['status'] = data['status'];
 					project['last_build'] = data['start_time'];
 					project['last_duration'] = data['duration'];
-					if (status === self.STATUS_BUILDING) {
+					if (status >= self.STATUS_PREPARING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
 							self.checkStatus(project);
 						}, 1000);

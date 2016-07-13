@@ -27,8 +27,7 @@
 			<tr>
 				<td v-text="i18n('Status')"></td>
 				<td align="left">
-					<span class="tag {{['', 'color-info', 'color-success', 'color-danger', 'color-warning'][history['status']]}}"
-						  v-text="[i18n('Initial'), i18n('Building'), i18n('Success'), i18n('Failed'), i18n('Aborted')][history['status']]"></span>
+					<span class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"></span>
 				</td>
 			</tr>
 			<tr>
@@ -50,7 +49,7 @@
 				<td align="left">
 					<pre v-html="history['checkout_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_CHECKOUT"></i>
+					   v-if="history['status'] === STATUS_PREPARING"></i>
 				</td>
 			</tr>
 			<tr>
@@ -58,7 +57,7 @@
 				<td align="left">
 					<pre v-html="history['build_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_BUILD"></i>
+					   v-if="history['status'] === STATUS_BUILDING"></i>
 				</td>
 			</tr>
 			<tr>
@@ -66,7 +65,7 @@
 				<td align="left">
 					<pre v-html="history['test_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_TEST"></i>
+					   v-if="history['status'] === STATUS_TESTING"></i>
 				</td>
 			</tr>
 			<tr>
@@ -74,7 +73,7 @@
 				<td align="left">
 					<pre v-html="history['pack_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_PACK"></i>
+					   v-if="history['status'] === STATUS_PACKING"></i>
 				</td>
 			</tr>
 			<tr>
@@ -82,7 +81,7 @@
 				<td align="left">
 					<pre v-html="history['deploy_result']"></pre>
 					<i class="loading"
-					   v-if="history['status'] === STATUS_BUILDING && history['step'] === STEP_DEPLOY"></i>
+					   v-if="history['status'] === STATUS_DEPLOYING"></i>
 				</td>
 			</tr>
 			</tbody>

@@ -35,8 +35,7 @@
 				<td v-text="project['last_build'] | datetime"></td>
 				<td v-text="project['last_duration'] | duration"></td>
 				<td>
-					<a class="tag {{['', 'color-info', 'color-success', 'color-danger', 'color-warning'][project['status']]}}"
-					   v-text="[i18n('Initial'), i18n('Building'), i18n('Success'), i18n('Failed'), i18n('Aborted')][project['status']]"
+					<a class="tag {{project['status'] | statusColor}}" v-text="project['status'] | statusStr"
 					   :href="project['status'] ? '/projects/' + project['name'] + '/histories/' + project['history_length'] : null"></a>
 				</td>
 				<td>

@@ -34,7 +34,7 @@
 				<td align="left" v-text="project['repo_url']"></td>
 			</tr>
 			<tr v-if="project['repo_type'] === 'git'">
-				<td v-text="i18n('Branch to build')"></td>
+				<td v-text="i18n('Branch To Build')"></td>
 				<td align="left" v-text="project['repo_branch'] || 'master'"></td>
 			</tr>
 			</tbody>
@@ -81,8 +81,7 @@
 				<td v-text="history['start_time'] | datetime"></td>
 				<td v-text="history['duration'] | duration"></td>
 				<td>
-					<a class="tag {{['', 'color-info', 'color-success', 'color-danger', 'color-warning'][history['status']]}}"
-					   v-text="[i18n('Initial'), i18n('Building'), i18n('Success'), i18n('Failed'), i18n('Aborted')][history['status']]"
+					<a class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"
 					   :href="'/projects/' + project['name'] + '/histories/' + $key"></a>
 				</td>
 				<td>

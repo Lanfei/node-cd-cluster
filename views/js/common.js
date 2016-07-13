@@ -112,4 +112,14 @@
 		return script;
 	});
 
+	Vue.filter('statusStr', function (status) {
+		return utils.i18n(['Initial', 'Preparing', 'Building', 'Testing', 'Packing', 'Deploying', 'Success', 'Failed', 'Aborted'][status]);
+	});
+
+	Vue.filter('statusColor', function (status) {
+		return ['', 'color-info', 'color-info', 'color-info', 'color-info', 'color-info', 'color-success', 'color-danger', 'color-warning'][status];
+	});
+
+	Vue.filter('i18n', utils.i18n);
+
 })(window);
