@@ -15,8 +15,8 @@ exports.unknownError = function (desc, stack) {
 	return err;
 };
 
-exports.buildError = function (desc, stack) {
-	var err = new Error('Build Error');
+exports.runtimeError = function (desc, stack) {
+	var err = new Error('Runtime Error');
 	err.status = 500;
 	err.desc = desc || '';
 	err.stack = stack || err.stack;

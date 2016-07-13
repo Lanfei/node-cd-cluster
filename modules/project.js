@@ -6,6 +6,7 @@ var archiver = require('archiver');
 var querystring = require('querystring');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
+var errFactory = require('../libs/err_factory');
 var historyModule = require('../modules/history');
 
 var tasks = {};
@@ -173,16 +174,14 @@ exports.buildProject = function (name, next) {
 			exports.deployProject(name, historyId, next);
 		},
 		function (result, next) {
-			historyModule.writeOutput(name, historyId, step, result['output'], function (err) {
-				next(result['error'] || err);
-			});
+			historyModule.writeOutput(name, historyId, step, result, next);
 		}
 	], function (err) {
 		var startTime = history['start_time'];
 		history['duration'] = Date.now() - startTime;
 		if (err) {
 			history['status'] = historyModule.STATUS_FAILED;
-			historyModule.writeOutput(name, historyId, step, '\n' + err.message);
+			historyModule.writeOutput(name, historyId, step, (err.desc || err.message) + '\n\n' + '\u001b[31mFailed\u001b[39m');
 		} else {
 			history['status'] = historyModule.STATUS_SUCCESS;
 		}
@@ -386,22 +385,31 @@ exports.getBuildEnv = function (name, historyId) {
 };
 
 function resolveNodeResults(results, nodes, next) {
+	var err;
 	var output = '';
-	var result = {};
+	var failed = false;
 	if (results) {
 		output = results.map(function (res, i) {
-			res = res || {};
-			if (res['error']) {
-				result['error'] = new Error(res['error']);
-			}
+			var msg;
 			var node = nodes[i];
 			var host = node['host'];
-			var msg = res['data'] || res['error_desc'] || res['error'] || '';
-			return '\u001b[1m' + host + ':\u001b[22m\n' + msg;
+			if (!res) {
+				msg = '';
+			} else if (res['error']) {
+				failed = true;
+				msg = res['error'] + '\n' + res['error_desc'];
+			}
+			if (res['data']) {
+				msg += '\n' + res['data'];
+			}
+			console.log(res);
+			return '\u001b[1m' + host + ':\u001b[22m\n' + msg + '\n';
 		}).join('\n\n');
 	}
-	result['output'] = output;
-	next(null, result);
+	if (failed) {
+		err = errFactory.runtimeError(output);
+	}
+	next(err, output);
 }
 
 function runCommand(name, historyId, step, command, next) {
@@ -436,7 +444,7 @@ function runCommand(name, historyId, step, command, next) {
 				if (!finished) {
 					finished = true;
 					if (code !== 0) {
-						next(new Error('Process exited with code ' + code));
+						next(errFactory.runtimeError('Process exited with code ' + code));
 					} else {
 						next();
 					}

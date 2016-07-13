@@ -123,7 +123,7 @@ function runCommand(type, command, cwd, env, next) {
 				if (!finished) {
 					finished = true;
 					if (code !== 0) {
-						next(new Error('Process exited with code ' + code));
+						next(errFactory.runtimeError(output + '\nProcess exited with code' + code));
 					} else {
 						next();
 					}

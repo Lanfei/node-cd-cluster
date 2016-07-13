@@ -40,7 +40,7 @@
 				</td>
 				<td>
 					<a class="option" @click="buildProject(project, $index)" v-text="i18n('Build')"
-					   v-if="project['status'] !== STATUS_BUILDING"></a>
+					   v-if="project['status'] < STATUS_INITIAL || project['status'] > STATUS_DEPLOYING"></a>
 					<a class="option" @click="abortProject(project, $index)" v-else>Abort</a>
 					<a class="option" @click="editProject(project)" v-text="i18n('Configure')"></a>
 				</td>
