@@ -2,7 +2,7 @@
 	var API = '/api/projects';
 
 	var vm = new Vue({
-		el: '#main',
+		el: 'body',
 		data: {
 			name: '',
 			project: {

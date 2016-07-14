@@ -9,7 +9,7 @@
 <body>
 <%- include('sidebar') %>
 <div id="header">
-	<h2 id="title">PROJECTS</h2>
+	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
 <div id="main">
 	<div class="toolbar">

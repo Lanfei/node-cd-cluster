@@ -35,34 +35,46 @@
 		}
 	};
 
-	global.nav = new Vue({
-		el: '#nav',
-		data: {
-			curPage: '',
-			menus: [{
-				name: 'index',
-				icon: 'dashboard',
-				label: 'Dashboard',
-				link: '/'
-			}, {
-				name: 'projects',
-				icon: 'project',
-				label: 'Projects',
-				link: '/projects'
-			}, {
-				name: 'users',
-				icon: 'user',
-				label: 'Users',
-				link: '/users'
-			}]
-		},
-		methods: {
-			init: function (page) {
-				this.curPage = page;
+	if (document.getElementById('nav')) {
+		global.nav = new Vue({
+			el: '#nav',
+			data: {
+				curPage: '',
+				menus: [{
+					name: 'index',
+					icon: 'dashboard',
+					label: 'Dashboard',
+					link: '/'
+				}, {
+					name: 'projects',
+					icon: 'project',
+					label: 'Projects',
+					link: '/projects'
+				}, {
+					name: 'users',
+					icon: 'user',
+					label: 'Users',
+					link: '/users'
+				}, {
+					name: 'profile',
+					icon: 'profile',
+					label: 'Profile',
+					link: '/profile'
+				}, {
+					name: 'logout',
+					icon: 'logout',
+					label: 'Logout',
+					link: '/logout'
+				}]
 			},
-			i18n: utils.i18n
-		}
-	});
+			methods: {
+				init: function (page) {
+					this.curPage = page;
+				},
+				i18n: utils.i18n
+			}
+		});
+	}
 
 	Vue.filter('datetime', function (time) {
 		var d = new Date(time);
@@ -117,7 +129,7 @@
 	});
 
 	Vue.filter('statusColor', function (status) {
-		return ['', 'color-info', 'color-info', 'color-info', 'color-info', 'color-info', 'color-success', 'color-danger', 'color-warning'][status];
+		return ['', 'color-info', 'color-info', 'color-info', 'color-info', 'color-primary', 'color-success', 'color-danger', 'color-warning'][status];
 	});
 
 	Vue.filter('i18n', utils.i18n);

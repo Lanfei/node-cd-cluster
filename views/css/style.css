@@ -33,7 +33,7 @@ hr {
 
 label {
 	color: #424b57;
-	display: block;
+	margin-right: 10px;
 }
 
 button {
@@ -64,10 +64,10 @@ input[type=tel],
 input[type=url],
 input[type=text],
 input[type=email],
-input[type=number] {
+input[type=number],
+input[type=password] {
 	resize: none;
 	margin: 4px 0;
-	display: block;
 	min-width: 50%;
 	padding: 1px 4px;
 	border-radius: 3px;
@@ -79,7 +79,8 @@ textarea:focus,
 input[type=tel]:focus,
 input[type=url]:focus,
 input[type=text]:focus,
-input[type=email]:focus {
+input[type=email]:focus,
+input[type=password]:focus {
 	outline: none;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
 }
@@ -131,8 +132,8 @@ table {
 }
 
 th, td {
+	height: 25px;
 	padding: 8px;
-	min-height: 25px;
 	border: 1px solid #e8ecf2;
 }
 
@@ -356,12 +357,13 @@ tr:last-child td {
 	right: 0;
 	z-index: 1;
 	color: #fff;
+	height: 64px;
 	padding: 0 20px;
 	position: fixed;
 	line-height: 64px;
 	margin-left: 230px;
 	background: #37475f;
-	border-bottom: 1px solid #dcdce2;
+	border-bottom: 1px solid #eee;
 }
 
 #title {
@@ -386,6 +388,41 @@ tr:last-child td {
 
 .toolbar {
 	float: right;
+}
+
+#auth {
+	width: 320px;
+	margin: 8% auto;
+	text-align: center;
+	white-space: normal;
+	text-shadow: 0 1px 1px #fff;
+}
+
+#auth .title {
+	font-size: 40px;
+}
+
+#auth .sub-title {
+	margin: 0;
+	height: 38px;
+	line-height: 38px;
+}
+
+#auth label {
+	margin: 15px 0;
+	display: block;
+}
+
+#auth input {
+	width: 80%;
+	height: 30px;
+	padding: 4px 8px;
+}
+
+#auth button {
+	height: 35px;
+	padding: 0 20px;
+	margin: 5px 15px 15px;
 }
 
 .loading {

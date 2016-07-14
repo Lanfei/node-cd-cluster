@@ -8,11 +8,11 @@
 <body>
 <%- include('sidebar') %>
 <div id="header">
-	<h2 id="title">PROJECTS</h2>
+	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
 <div id="main">
 	<div class="toolbar">
-		<button @click="back">Back</button>
+		<button @click="back" v-text="i18n('Back')"></button>
 	</div>
 	<h3 class="sub-title" v-text="'History #' + id"></h3>
 	<div class="table-wrapper">

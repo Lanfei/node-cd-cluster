@@ -2,7 +2,7 @@
 	var API = '/api/projects';
 
 	var vm = new Vue({
-		el: '#main',
+		el: 'body',
 		data: {
 			projects: [],
 			STATUS_INITIAL: 0,
@@ -22,9 +22,10 @@
 				var self = this;
 				reqwest(API, function (res) {
 					var projects = res['data'];
-					self.projects = projects;
-					projects.forEach(function (project, i) {
-						self.formatProject(project);
+					self.projects = projects.map(function (project) {
+						return self.formatProject(project);
+					});
+					self.projects.forEach(function (project, i) {
 						var status = project['status'];
 						if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 							self.checkStatus(i);
@@ -75,9 +76,9 @@
 				var histories = project['histories'] || {};
 				var historyLength = project['history_length'];
 				var latestHistory = histories[historyLength] || {};
-				project['last_build'] = latestHistory['start_time'];
-				project['last_duration'] = latestHistory['duration'];
-				project['status'] = latestHistory['status'] || this.STATUS_INITIAL;
+				Vue.set(project, 'last_build', latestHistory['start_time']);
+				Vue.set(project, 'last_duration', latestHistory['duration']);
+				Vue.set(project, 'status', latestHistory['status'] || this.STATUS_INITIAL);
 				return project;
 			},
 			checkStatus: function (index) {
@@ -87,9 +88,10 @@
 				var name = project['name'];
 				reqwest(API + '/' + name + '/status', function (res) {
 					var data = res['data'];
-					var status = project['status'] = data['status'];
-					project['last_build'] = data['start_time'];
-					project['last_duration'] = data['duration'];
+					var status = data['status'];
+					Vue.set(project, 'status', status);
+					Vue.set(project, 'last_build', data['start_time']);
+					Vue.set(project, 'last_duration', data['duration']);
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
 							self.checkStatus(index);

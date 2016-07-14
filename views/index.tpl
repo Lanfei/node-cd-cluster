@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>CD Cluster</title>
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="/css/iconfont.css">
 </head>
 <body>
@@ -12,10 +12,10 @@
 	<h2 id="title">PROJECTS</h2>
 </div>
 <div id="main">
-	<div id="toolbar">
+	<div class="toolbar">
 		<button>Add Project</button>
 	</div>
-	<h3 id="sub-title">Project List</h3>
+	<h3 class="sub-title">Project List</h3>
 	<div class="table-wrapper">
 		<table>
 			<thead>
@@ -140,9 +140,9 @@
 		</div>
 	</form>
 </div>
-<script src="js/libs/vue.js"></script>
-<script src="js/libs/reqwest.min.js"></script>
-<script src="js/common.js"></script>
-<script src="js/index.js"></script>
+<script src="/js/libs/vue.js"></script>
+<script src="/js/libs/reqwest.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/index.js"></script>
 </body>
 </html>

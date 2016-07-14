@@ -9,13 +9,13 @@
 <body>
 <%- include('sidebar') %>
 <div id="header">
-	<h2 id="title">PROJECTS</h2>
+	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
 <div id="main">
 	<div class="toolbar">
-		<button @click="addProject">Add Project</button>
+		<button @click="addProject" v-text="i18n('Add Project')"></button>
 	</div>
-	<h3 class="sub-title">Project List</h3>
+	<h3 class="sub-title" v-text="i18n('Project List')"></h3>
 	<div class="table-wrapper">
 		<table>
 			<thead>

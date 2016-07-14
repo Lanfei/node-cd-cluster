@@ -40,7 +40,6 @@ app.use(function (err, req, res, next) {
 	if (err.status >= 500) {
 		logger.writeError(err);
 	}
-	next();
 });
 
 process.on('uncaughtException', function (e) {

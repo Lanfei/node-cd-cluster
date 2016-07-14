@@ -9,13 +9,13 @@
 <body>
 <%- include('sidebar') %>
 <div id="header">
-	<h2 id="title">PROJECTS</h2>
+	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
 <div id="main">
 	<div class="toolbar">
-		<button @click="back">Back</button>
+		<button @click="back" v-text="i18n('Back')"></button>
 	</div>
-	<h3 class="sub-title">Add Project</h3>
+	<h3 class="sub-title" v-text="i18n(name ? 'Configure Project' : 'Add Project')"></h3>
 	<form @submit="handleSubmit">
 		<div class="table-wrapper">
 			<table>
@@ -31,14 +31,15 @@
 					<td align="left">
 						<label>
 							<input type="radio" name="repo_type" value="none" v-model="project['repo_type']">
-							None
+							<span v-text="i18n('None')"></span>
 						</label>
 						<label>
-							<input type="radio" name="repo_type" value="git" v-model="project['repo_type']"> Git
+							<input type="radio" name="repo_type" value="git" v-model="project['repo_type']">
+							<span v-text="i18n('Git')"></span>
 						</label>
 						<label>
 							<input type="radio" name="repo_type" value="svn" v-model="project['repo_type']">
-							Subversion
+							<span v-text="i18n('Subversion')"></span>
 						</label>
 					</td>
 				</tr>
@@ -73,20 +74,20 @@
 						</template>
 						<template v-else>
 							<label>
-								<div v-text="i18n('Host:')"></div>
-								<input type="text" v-model="node['host']" required>
+								<span v-text="i18n('Host:')"></span><br>
+								<input type="text" v-model="node['host']" required><br>
 							</label>
 							<label>
-								<div v-text="i18n('Port:')"></div>
-								<input type="number" v-model="node['port']" required>
+								<span v-text="i18n('Port:')"></span><br>
+								<input type="number" v-model="node['port']" required><br>
 							</label>
 							<label>
-								<div v-text="i18n('Origin Working Directory:')"></div>
-								<input type="text" v-model="node['cwd']" required>
+								<span v-text="i18n('Origin Working Directory:')"></span><br>
+								<input type="text" v-model="node['cwd']" required><br>
 							</label>
 							<label>
-								<div v-text="i18n('Token:')"></div>
-								<input type="text" v-model="node['token']">
+								<span v-text="i18n('Token:')"></span><br>
+								<input type="text" v-model="node['token']"><br>
 							</label>
 							<button type="button" class="color-info" @click="updateNode">Apply</button>
 							<button type="button" @click="restoreNode">Cancel</button>
@@ -120,12 +121,12 @@
 						</template>
 						<template v-else>
 							<label>
-								<div v-text="i18n('Name:')"></div>
-								<input type="text" v-model="item['name']">
+								<span v-text="i18n('Name:')"></span><br>
+								<input type="text" v-model="item['name']"><br>
 							</label>
 							<label>
-								<div v-text="i18n('Command:')"></div>
-								<textarea v-model="item['command']"></textarea>
+								<span v-text="i18n('Command:')"></span><br>
+								<textarea v-model="item['command']"></textarea><br>
 							</label>
 							<button type="button" class="color-info" @click="updateScript">Apply</button>
 							<button type="button" @click="restoreScript">Cancel</button>

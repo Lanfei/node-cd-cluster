@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
+var userModule = require('../modules/user');
 var historyModule = require('../modules/history');
 
 var tasks = {};
@@ -72,10 +73,9 @@ exports.updateProject = function (name, data, next) {
 };
 
 exports.deleteProject = function (name, next) {
-	var data;
 	utils.forEach(projects, function (project, i) {
 		if (project['name'] === name) {
-			data = projects.splice(i, 1);
+			projects.splice(i, 1);
 			return false;
 		}
 	});
@@ -403,6 +403,16 @@ exports.getBuildEnv = function (name, historyId) {
 		PROJECT_NAME: name,
 		BUILD_ID: historyId
 	});
+};
+
+exports.checkPermission = function (user, project, next) {
+	var username = user['username'];
+	user = userModule.getUser(username);
+	if (user && user['is_admin'] && user['enabled']) {
+		next();
+	} else {
+		next(errFactory.unauthorized());
+	}
 };
 
 function resolveNodeResults(results, nodes, next) {

@@ -14,18 +14,9 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.icon-user:before {
-	content: "\e600";
-}
-
-.icon-close:before {
-	content: "\e601";
-}
-
-.icon-project:before {
-	content: "\e603";
-}
-
-.icon-dashboard:before {
-	content: "\e602";
-}
+.icon-user:before { content: "\e600"; }
+.icon-close:before { content: "\e601"; }
+.icon-profile:before { content: "\e605"; }
+.icon-logout:before { content: "\e604"; }
+.icon-project:before { content: "\e603"; }
+.icon-dashboard:before { content: "\e602"; }
