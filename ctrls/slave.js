@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var async = require('async');
-var unzip2 = require('unzip2');
+var admZip = require('adm-zip');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
@@ -34,25 +34,18 @@ exports.deployHandler = function (req, res, next) {
 		},
 		function (output, next) {
 			deployResult += output;
-			var stream = req.pipe(unzip2.Extract({path: cwd}));
-			var finished = false;
-
-			function callback(err) {
-				if (!finished) {
-					finished = true;
-					next(err);
-				}
-			}
-
-			stream.on('finish', callback);
-			stream.on('error', callback);
+			utils.receiveBody(req, next);
+		},
+		function (data, next) {
+			var zip = admZip(data);
+			deployResult += '\nDeploying files...\n\n';
+			zip.extractAllToAsync(cwd, true, next);
 		},
 		function (next) {
-			deployResult += '\nDeploying files...\n\n';
 			runCommand('post-deploy', postDeployScripts, cwd, env, next);
 		},
 		function (output, next) {
-			deployResult += output;
+			deployResult += output + '\nDone.';
 			next();
 		}
 	], function (err) {

@@ -62,7 +62,7 @@ exports.postHandler = function (req, res, next) {
 	var project;
 	async.waterfall([
 		function (next) {
-			userModule.checkPermission(req.user, next);
+			userModule.checkAdminPermission(req.user, next);
 		},
 		function (next) {
 			utils.receiveJSON(req, next);
