@@ -6,6 +6,7 @@ var errFactory = require('../libs/err_factory');
 var authCtrl = require('../ctrls/auth');
 var userCtrl = require('../ctrls/user');
 var projectCtrl = require('../ctrls/project');
+var historyCtrl = require('../ctrls/history');
 
 var router = express.Router();
 
@@ -20,6 +21,8 @@ router.get('/users/:name', token.verifier, userCtrl.getItemHandler);
 router.put('/users/:name', token.verifier, userCtrl.putItemHandler);
 
 router.delete('/users/:name', token.verifier, userCtrl.deleteItemHandler);
+
+router.get('/histories', token.verifier, historyCtrl.getHandler);
 
 router.get('/projects', token.verifier, projectCtrl.getHandler);
 
@@ -43,7 +46,7 @@ router.post('/projects/:name/execute', token.verifier, projectCtrl.executeHandle
 
 router.get('/projects/:name/status', token.verifier, projectCtrl.getStatusHandler);
 
-router.get('/projects/:name/histories/:id', token.verifier, projectCtrl.getHistoryHandler);
+router.get('/projects/:name/histories/:id', token.verifier, historyCtrl.getItemHandler);
 
 router.use(function (req, res, next) {
 	next(errFactory.notFound());

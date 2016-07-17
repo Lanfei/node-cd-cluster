@@ -21,7 +21,7 @@
 				history.back();
 				location.href = '/users';
 			},
-			handleSubmit: function (e) {
+			submit: function () {
 				var user = this.user;
 				var username = user['username'];
 				reqwest({
@@ -35,7 +35,6 @@
 
 					}
 				});
-				e.preventDefault();
 			},
 			i18n: utils.i18n
 		}

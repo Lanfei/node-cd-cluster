@@ -7,7 +7,7 @@
 			user: {}
 		},
 		methods: {
-			handleSubmit: function (e) {
+			submit: function () {
 				reqwest({
 					url: API,
 					method: 'post',
@@ -19,7 +19,6 @@
 						console.error('error');
 					}
 				});
-				e.preventDefault();
 			},
 			login: function () {
 				location.href = '/login';

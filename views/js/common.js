@@ -51,6 +51,11 @@
 					label: 'Projects',
 					link: '/projects'
 				}, {
+					name: 'histories',
+					icon: 'history',
+					label: 'Histories',
+					link: '/histories'
+				}, {
 					name: 'users',
 					icon: 'user',
 					label: 'Users',

@@ -9,7 +9,7 @@
 <body>
 <div id="auth">
 	<h1 class="title">CD Cluster</h1>
-	<form class="table-wrapper" @submit="handleSubmit">
+	<form class="table-wrapper" @submit.prevent="submit">
 		<table>
 			<thead>
 			<tr>

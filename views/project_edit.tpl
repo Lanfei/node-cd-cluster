@@ -16,13 +16,16 @@
 		<button @click="back" v-text="i18n('Back')"></button>
 	</div>
 	<h3 class="sub-title" v-text="i18n(name ? 'Configure Project' : 'Add Project')"></h3>
-	<form @submit="handleSubmit">
+	<form @submit.prevent="submit">
 		<div class="table-wrapper">
 			<table>
 				<thead>
 				<tr>
 					<th v-text="i18n('Name')" width="20%"></th>
-					<th align="left"><input type="text" required v-model="project['name']"></th>
+					<th align="left">
+						<span v-text="project['name']" v-if="name"></span>
+						<input type="text" required v-model="project['name']" v-if="!name">
+					</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -75,19 +78,22 @@
 						<template v-else>
 							<label>
 								<span v-text="i18n('Host:')"></span><br>
-								<input type="text" v-model="node['host']" required><br>
+								<input type="text" v-model="node['host']" @keydown.enter.prevent="updateNode"
+									   required><br>
 							</label>
 							<label>
 								<span v-text="i18n('Port:')"></span><br>
-								<input type="number" v-model="node['port']" required><br>
+								<input type="number" v-model="node['port']" @keydown.enter.prevent="updateNode"
+									   required><br>
 							</label>
 							<label>
 								<span v-text="i18n('Origin Working Directory:')"></span><br>
-								<input type="text" v-model="node['cwd']" required><br>
+								<input type="text" v-model="node['cwd']" @keydown.enter.prevent="updateNode"
+									   required><br>
 							</label>
 							<label>
 								<span v-text="i18n('Token:')"></span><br>
-								<input type="text" v-model="node['token']"><br>
+								<input type="text" v-model="node['token']" @keydown.enter.prevent="updateNode"><br>
 							</label>
 							<button type="button" class="color-info" @click="updateNode">Apply</button>
 							<button type="button" @click="restoreNode">Cancel</button>
@@ -122,7 +128,7 @@
 						<template v-else>
 							<label>
 								<span v-text="i18n('Name:')"></span><br>
-								<input type="text" v-model="item['name']"><br>
+								<input type="text" v-model="item['name']" @keydown.enter.prevent="updateScript"><br>
 							</label>
 							<label>
 								<span v-text="i18n('Command:')"></span><br>
@@ -141,7 +147,8 @@
 							<option :value="user['username']" v-text="user['username']" v-for="user in users"
 									v-if="project['managers'].indexOf(user['username']) < 0"></option>
 						</select>
-						<a class="option" @click="addManager" :disabled="!addingManager" v-text="i18n('Add Manager')"></a>
+						<a class="option" @click="addManager" :disabled="!addingManager"
+						   v-text="i18n('Add Manager')"></a>
 					</td>
 				</tr>
 				<tr v-for="username in project['managers']">
@@ -161,7 +168,7 @@
 				<tr>
 					<td colspan="2">
 						<button type="submit" class="color-primary" v-text="i18n('Submit')"></button>
-						<button type="submit" v-text="i18n('Cancel')" @click="back"></button>
+						<button type="button" v-text="i18n('Cancel')" @click="back"></button>
 					</td>
 				</tr>
 				</tbody>

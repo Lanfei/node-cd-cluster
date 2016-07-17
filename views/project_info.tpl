@@ -75,23 +75,24 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr v-for="history in project['histories'] | orderBy 'start_time' -1" track-by="$index">
+			<tr v-for="history in project['histories'] | orderBy 'id' -1" track-by="$index">
 				<td>
-					<a v-text="'#' + $key" :href="'/projects/' + project['name'] + '/histories/' + $key"></a>
+					<a v-text="'#' + history['id']"
+					   :href="'/projects/' + project['name'] + '/histories/' + history['id']"></a>
 				</td>
 				<td v-text="history['start_time'] | datetime"></td>
 				<td v-text="history['duration'] | duration"></td>
 				<td v-text="history['operator']"></td>
 				<td>
 					<a class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"
-					   :href="'/projects/' + project['name'] + '/histories/' + $key"></a>
+					   :href="'/projects/' + project['name'] + '/histories/' + history['id']"></a>
 				</td>
 				<td>
 					<a class="option" @click="abort" v-text="i18n('Abort')"
 					   v-if="history['status'] >= STATUS_INITIAL && history['status'] <= STATUS_DEPLOYING"></a>
 					<template v-if="history['build_url']" v-else>
 						<a class="option" :href="history['build_url']" v-text="i18n('Download')"></a>
-						<a class="option" @click="deploy($key)" v-if="project['deploy_nodes']"
+						<a class="option" @click="deploy(history['id'])" v-if="project['deploy_nodes']"
 						   v-text="i18n('Revert')"></a>
 					</template>
 				</td>

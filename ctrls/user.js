@@ -6,8 +6,6 @@ var userModule = require('../modules/user');
 
 var FIELDS = ['username', 'email', 'tel', 'is_admin', 'enabled'];
 
-var users = userModule.users;
-
 exports.getListViewHandler = function (req, res, next) {
 	var me = userModule.getUser(req.user['username']);
 	if (me) {
@@ -30,6 +28,7 @@ exports.getEditViewHandler = function (req, res, next) {
 };
 
 exports.getHandler = function (req, res) {
+	var users = userModule.getUsers();
 	var result = users.map(function (user) {
 		return utils.filter(user, FIELDS);
 	});

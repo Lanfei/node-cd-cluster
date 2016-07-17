@@ -132,7 +132,7 @@
 			removeManager: function (username) {
 				this.project['managers'].$remove(username);
 			},
-			handleSubmit: function (e) {
+			submit: function () {
 				var name = this.name;
 				var project = this.project;
 				var url = name ? API + '/' + name : API;
@@ -148,7 +148,6 @@
 						console.log(err);
 					}
 				});
-				e.preventDefault();
 			},
 			cleanWorkspace: function () {
 				if (!confirm(utils.i18n('Are you sure?'))) {

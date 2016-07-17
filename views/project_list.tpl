@@ -32,11 +32,11 @@
 				<td>
 					<a :href="'/projects/' + project['name']" v-text="project['name']"></a>
 				</td>
-				<td v-text="project['last_build'] | datetime"></td>
+				<td v-text="project['last_build_time'] | datetime"></td>
 				<td v-text="project['last_duration'] | duration"></td>
 				<td>
 					<a class="tag {{project['status'] | statusColor}}" v-text="project['status'] | statusStr"
-					   :href="project['status'] ? '/projects/' + project['name'] + '/histories/' + project['history_length'] : null"></a>
+					   :href="project['status'] ? '/projects/' + project['name'] + '/histories/' + project['last_build_id'] : null"></a>
 				</td>
 				<td>
 					<a class="option" @click="buildProject(project, $index)" v-text="i18n('Build')"

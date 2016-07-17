@@ -21,10 +21,7 @@
 
 				var self = this;
 				reqwest(API, function (res) {
-					var projects = res['data'];
-					self.projects = projects.map(function (project) {
-						return self.formatProject(project);
-					});
+					self.projects = res['data'];
 					self.projects.forEach(function (project, i) {
 						var status = project['status'];
 						if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
@@ -41,14 +38,11 @@
 			},
 			buildProject: function (project, index) {
 				var self = this;
-				var projects = this.projects;
 				var name = project['name'];
 				reqwest({
 					url: API + '/' + name + '/build',
 					method: 'post',
-					success: function (res) {
-						var project = res['data'];
-						projects.splice(index, 1, self.formatProject(project));
+					success: function () {
 						self.checkStatus(index);
 					},
 					error: function (err) {
@@ -58,28 +52,17 @@
 			},
 			abortProject: function (project, index) {
 				var self = this;
-				var projects = this.projects;
 				var name = project['name'];
 				reqwest({
 					url: API + '/' + name + '/abort',
 					method: 'post',
-					success: function (res) {
-						var project = res['data'];
-						projects.splice(index, 1, self.formatProject(project));
+					success: function () {
+						self.checkStatus(index);
 					},
 					error: function (err) {
 						console.log(err);
 					}
 				});
-			},
-			formatProject: function (project) {
-				var histories = project['histories'] || {};
-				var historyLength = project['history_length'];
-				var latestHistory = histories[historyLength] || {};
-				Vue.set(project, 'last_build', latestHistory['start_time']);
-				Vue.set(project, 'last_duration', latestHistory['duration']);
-				Vue.set(project, 'status', latestHistory['status'] || this.STATUS_INITIAL);
-				return project;
 			},
 			checkStatus: function (index) {
 				var self = this;
@@ -89,9 +72,10 @@
 				reqwest(API + '/' + name + '/status', function (res) {
 					var data = res['data'];
 					var status = data['status'];
-					Vue.set(project, 'status', status);
-					Vue.set(project, 'last_build', data['start_time']);
-					Vue.set(project, 'last_duration', data['duration']);
+					project['status'] =  status;
+					project['last_build_id'] = data['id'];
+					project['last_duration'] =  data['duration'];
+					project['last_build_time'] =  data['start_time'];
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
 							self.checkStatus(index);

@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>CD Cluster</title>
 	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="/css/iconfont.css">
+	<link rel="stylesheet" href="//at.alicdn.com/t/font_1468750585_682355.css">
 </head>
 <body>
 <%- include('sidebar') %>

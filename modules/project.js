@@ -12,16 +12,11 @@ var historyModule = require('../modules/history');
 
 var tasks = {};
 
-var projects = exports.projects = utils.readConfig('projects') || [];
+var projects = utils.readConfig('projects') || [];
 
-utils.forEach(projects, function (project) {
-	utils.forEach(project['histories'], function (history) {
-		if (history['status'] === historyModule.STATUS_BUILDING) {
-			history['status'] = historyModule.STATUS_ABORTED;
-		}
-	});
-});
-utils.writeConfig('projects', projects);
+exports.getProjects = function () {
+	return projects;
+};
 
 exports.getProject = function (name) {
 	return projects.filter(function (project) {
@@ -30,11 +25,8 @@ exports.getProject = function (name) {
 };
 
 exports.addProject = function (project, next) {
-	var name = project['name'];
-	exports.deleteProject(name, function (err) {
-		projects.push(project);
-		next(err);
-	});
+	projects.push(project);
+	utils.writeConfig('projects', projects, next);
 };
 
 exports.updateProject = function (name, data, next) {
@@ -105,17 +97,13 @@ exports.buildProject = function (name, operator, next) {
 	}
 	async.waterfall([
 		function (next) {
-			var histories = project['histories'] || {};
-			var historyLength = project['history_length'] + 1 || 1;
-			historyId = historyLength;
-			history = histories[historyId] = {
-				start_time: Date.now(),
-				status: historyModule.STATUS_BUILDING,
-				operator: operator
-			};
-			project['histories'] = histories;
-			project['history_length'] = historyLength;
-			exports.updateProject(name, project, next);
+			historyModule.addHistory(name, operator, next);
+		},
+		function (data, next) {
+			history = data;
+			historyId = history['id'];
+			history['status'] = historyModule.STATUS_UPDATING;
+			historyModule.updateHistory(name, historyId, history, next);
 		},
 		function (next) {
 			exports.ensureWorkspace(name, next);
@@ -139,7 +127,6 @@ exports.buildProject = function (name, operator, next) {
 				}
 			}
 			step = 'checkout';
-			history['status'] = historyModule.STATUS_UPDATING;
 			runCommand(name, historyId, step, command, function (err) {
 				if (err) {
 					exports.cleanWorkspace(name);
@@ -150,16 +137,25 @@ exports.buildProject = function (name, operator, next) {
 		function (next) {
 			step = 'build';
 			history['status'] = historyModule.STATUS_BUILDING;
+			historyModule.updateHistory(name, historyId, history, next);
+		},
+		function (next) {
 			runCommand(name, historyId, step, project['build_scripts'], next);
 		},
 		function (next) {
 			step = 'test';
 			history['status'] = historyModule.STATUS_TESTING;
+			historyModule.updateHistory(name, historyId, history, next);
+		},
+		function (next) {
 			runCommand(name, historyId, step, project['test_scripts'], next);
 		},
 		function (next) {
 			step = 'pack';
 			history['status'] = historyModule.STATUS_PACKING;
+			historyModule.updateHistory(name, historyId, history, next);
+		},
+		function (next) {
 			historyModule.writeOutput(name, historyId, step, 'Creating zip file...\n', next);
 		},
 		function (next) {
@@ -167,11 +163,17 @@ exports.buildProject = function (name, operator, next) {
 		},
 		function (next) {
 			history['build_url'] = historyModule.getBuildUrl(name, historyId);
+			historyModule.updateHistory(name, historyId, history, next);
+		},
+		function (next) {
 			historyModule.writeOutput(name, historyId, step, '\nDone.', next);
 		},
 		function (next) {
 			step = 'deploy';
 			history['status'] = historyModule.STATUS_DEPLOYING;
+			historyModule.updateHistory(name, historyId, history, next);
+		},
+		function (next) {
 			exports.deployProject(name, historyId, next);
 		},
 		function (result, next) {
@@ -186,8 +188,7 @@ exports.buildProject = function (name, operator, next) {
 		} else {
 			history['status'] = historyModule.STATUS_SUCCESS;
 		}
-		exports.updateProject(name, project);
-		next && next(err);
+		historyModule.updateHistory(name, historyId, history, next);
 	});
 };
 
@@ -195,28 +196,30 @@ exports.abortProject = function (name, next) {
 	var task = tasks[name];
 	var project = exports.getProject(name);
 	if (task && project) {
-		var histories = project['histories'];
 		var historyId = task['id'];
 		var process = task['process'];
 		var archive = task['archive'];
-		var history = histories[historyId];
+		var history = historyModule.getHistory(name, historyId);
+
+		function updateHistory() {
+			history['status'] = historyModule.STATUS_ABORTED;
+			historyModule.updateHistory(name, historyId, history, next);
+		}
+
 		if (archive) {
 			archive.abort();
-			history['status'] = historyModule.STATUS_ABORTED;
+			updateHistory();
 		} else if (process) {
 			if (process.killed || process.exitCode !== null) {
-				history['status'] = historyModule.STATUS_ABORTED;
-				next();
+				updateHistory();
 			} else {
 				process.kill();
 				process.on('exit', function () {
-					history['status'] = historyModule.STATUS_ABORTED;
-					exports.updateProject(name, project);
-					next();
+					updateHistory();
 				});
 			}
 		} else {
-			history['status'] = historyModule.STATUS_ABORTED;
+			updateHistory();
 		}
 		delete tasks[name];
 	} else {

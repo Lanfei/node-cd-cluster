@@ -9,8 +9,6 @@ var historyModule = require('../modules/history');
 
 var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'managers'];
 
-var projects = projectModule.projects;
-
 exports.getListViewHandler = function (req, res) {
 	var me = userModule.getUser(req.user['username']);
 	if (me) {
@@ -62,6 +60,7 @@ exports.downBuildPackHandler = function (req, res, next) {
 exports.getHandler = function (req, res) {
 	var username = req.user['username'];
 	var user = userModule.getUser(username);
+	var projects = projectModule.getProjects();
 	var result;
 	if (user['is_admin']) {
 		result = projects;
@@ -71,6 +70,7 @@ exports.getHandler = function (req, res) {
 			return managers.indexOf(username) >= 0;
 		});
 	}
+	result = result.map(getProjectWithStatus);
 	res.json({
 		data: result
 	});
@@ -101,7 +101,7 @@ exports.postHandler = function (req, res, next) {
 		} else {
 			res.status(201);
 			res.json({
-				data: project
+				data: 'ok'
 			});
 		}
 	});
@@ -110,12 +110,15 @@ exports.postHandler = function (req, res, next) {
 exports.getItemHandler = function (req, res) {
 	var name = req.params['name'];
 	var project = projectModule.getProject(name);
+	var histories = historyModule.getHistoryList(name);
 	projectModule.checkPermission(req.user, project, function (err) {
 		if (err) {
 			next(err);
 		} else {
 			res.json({
-				data: project
+				data: utils.extend({}, project, {
+					histories: histories
+				})
 			});
 		}
 	});
@@ -139,15 +142,8 @@ exports.putItemHandler = function (req, res, next) {
 		},
 		function (json, next) {
 			data = utils.filter(json, FIELDS);
-			var newName = data['name'];
-			if (newName && newName !== name) {
-				checkConflict(newName, next);
-			} else {
-				next();
-			}
-		},
-		function (next) {
 			data = utils.extend({}, project, data);
+			data['name'] = name;
 			projectModule.updateProject(name, data, next);
 		}
 	], function (err) {
@@ -155,7 +151,7 @@ exports.putItemHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: data
+				data: 'ok'
 			});
 		}
 	});
@@ -215,7 +211,7 @@ exports.buildHandler = function (req, res, next) {
 			projectModule.checkPermission(req.user, project, next);
 		},
 		function (next) {
-			var latestHistory = getLatestHistory(project);
+			var latestHistory = historyModule.getLatestHistory(project) || {};
 			if (latestHistory['status'] === historyModule.STATUS_BUILDING) {
 				next(errFactory.conflictError('The project is building now'));
 			} else {
@@ -231,7 +227,7 @@ exports.buildHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: project
+				data: 'ok'
 			})
 		}
 	});
@@ -254,7 +250,7 @@ exports.abortHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: projectModule.getProject(name)
+				data: 'ok'
 			});
 		}
 	});
@@ -330,7 +326,7 @@ exports.getStatusHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: getLatestHistory(project)
+				data: historyModule.getLatestHistory(project['name'])
 			});
 		}
 	});
@@ -340,8 +336,7 @@ exports.getHistoryHandler = function (req, res, next) {
 	var id = req.params['id'];
 	var name = req.params['name'];
 	var project = projectModule.getProject(name) || {};
-	var histories = project['histories'] || {};
-	var history = histories[id];
+	var history = historyModule.getHistory(name, id);
 	if (!history) {
 		next();
 	} else {
@@ -398,10 +393,13 @@ function checkConflict(name, next) {
 	}
 }
 
-function getLatestHistory(project) {
-	var histories = project['histories'] || {};
-	var historyLength = project['history_length'];
-	var latestHistory = histories[historyLength] || {};
-	latestHistory['status'] = latestHistory['status'] || historyModule.STATUS_INITIAL;
-	return latestHistory;
+function getProjectWithStatus(project) {
+	var history = historyModule.getLatestHistory(project['name']) || {};
+	var statusData = {
+		last_build_id: history['id'] || null,
+		last_build_time: history['start_time'] || null,
+		last_duration: history['duration'] || null,
+		status: history['status'] || historyModule.STATUS_INITIAL
+	};
+	return utils.extend({}, project, statusData);
 }

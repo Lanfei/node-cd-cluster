@@ -28,8 +28,7 @@
 					reqwest(API + '/' + name, function (res) {
 						var project = res['data'];
 						var histories = project['histories'];
-						var historyLength = project['history_length'];
-						var latestHistory = histories[historyLength] || {};
+						var latestHistory = histories[histories.length - 1] || {};
 						var status = latestHistory['status'];
 						self.project = project;
 						if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
@@ -46,8 +45,8 @@
 					var data = res['data'];
 					var status = data['status'];
 					var histories = project['histories'];
-					var historyLength = project['history_length'];
-					histories[historyLength] = data;
+					histories.pop();
+					histories.push(data);
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
 							self.checkStatus(project);
@@ -66,8 +65,8 @@
 				reqwest({
 					url: API + '/' + name + '/abort',
 					method: 'post',
-					success: function (res) {
-						self.project = res['data'];
+					success: function () {
+						self.checkStatus();
 					},
 					error: function (err) {
 						console.log(err);

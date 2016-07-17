@@ -12,8 +12,8 @@
 	<h2 id="title" v-text="i18n('Profile')"></h2>
 </div>
 <div id="main">
-	<h3 class="sub-title" v-text="i18n('Update Profile')"></h3>
-	<form @submit="handleSubmit">
+	<h3 class="sub-title" v-text="i18n('My Profile')"></h3>
+	<form @submit.prevent="submit">
 		<div class="table-wrapper">
 			<table>
 				<thead>
@@ -38,7 +38,7 @@
 				<tr>
 					<td colspan="2">
 						<button type="submit" class="color-primary" v-text="i18n('Submit')"></button>
-						<button type="submit" v-text="i18n('Cancel')" @click="back"></button>
+						<button type="button" v-text="i18n('Cancel')" @click="back"></button>
 					</td>
 				</tr>
 				</tbody>

@@ -7,6 +7,7 @@ var errFactory = require('../libs/err_factory');
 var authCtrl = require('../ctrls/auth');
 var userCtrl = require('../ctrls/user');
 var indexCtrl = require('../ctrls/index');
+var historyCtrl = require('../ctrls/history');
 var projectCtrl = require('../ctrls/project');
 var profileCtrl = require('../ctrls/profile');
 
@@ -25,6 +26,8 @@ router.get('/logout', authCtrl.getLogoutViewHandler);
 router.get('/users', token.verifier, userCtrl.getListViewHandler);
 
 router.get('/users/:name/edit', token.verifier, userCtrl.getEditViewHandler);
+
+router.get('/histories', token.verifier, historyCtrl.getListViewHandler);
 
 router.get('/projects', token.verifier, projectCtrl.getListViewHandler);
 

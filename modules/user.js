@@ -1,7 +1,7 @@
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
 
-var users = exports.users = utils.readConfig('users') || [];
+var users = utils.readConfig('users') || [];
 
 exports.checkAdminPermission = function (user, next) {
 	var username = user['username'];
@@ -11,6 +11,10 @@ exports.checkAdminPermission = function (user, next) {
 	} else {
 		next(errFactory.unauthorized());
 	}
+};
+
+exports.getUsers = function () {
+	return users;
 };
 
 exports.getUser = function (username) {
