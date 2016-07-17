@@ -7,12 +7,19 @@ var userModule = require('../modules/user');
 var projectModule = require('../modules/project');
 var historyModule = require('../modules/history');
 
-var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts'];
+var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'managers'];
 
 var projects = projectModule.projects;
 
 exports.getListViewHandler = function (req, res) {
-	res.render('project_list');
+	var me = userModule.getUser(req.user['username']);
+	if (me) {
+		res.render('project_list', {
+			me: me
+		});
+	} else {
+		next(errFactory.unauthorized());
+	}
 };
 
 exports.getInfoViewHandler = function (req, res) {
@@ -53,8 +60,19 @@ exports.downBuildPackHandler = function (req, res, next) {
 };
 
 exports.getHandler = function (req, res) {
+	var username = req.user['username'];
+	var user = userModule.getUser(username);
+	var result;
+	if (user['is_admin']) {
+		result = projects;
+	} else {
+		result = projects.filter(function (project) {
+			var managers = project['managers'] || [];
+			return managers.indexOf(username) >= 0;
+		});
+	}
 	res.json({
-		data: projects
+		data: result
 	});
 };
 
@@ -187,6 +205,7 @@ exports.cleanHandler = function (req, res, next) {
 exports.buildHandler = function (req, res, next) {
 	var project;
 	var name = req.params['name'];
+	var username = req.user['username'];
 	async.waterfall([
 		function (next) {
 			checkProject(name, next);
@@ -204,7 +223,7 @@ exports.buildHandler = function (req, res, next) {
 			}
 		},
 		function (next) {
-			projectModule.buildProject(name);
+			projectModule.buildProject(name, username);
 			next();
 		}
 	], function (err) {

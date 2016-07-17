@@ -5,7 +5,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-body, button, input, textarea {
+body, select, button, input, textarea {
 	font: 14px/1.8 Helvetica, STHeiti, sans-serif, 'Microsoft YaHei';
 }
 
@@ -38,7 +38,6 @@ label {
 
 button {
 	height: 30px;
-	border: none;
 	outline: none;
 	margin: 4px 0;
 	color: #424b57;
@@ -47,6 +46,7 @@ button {
 	line-height: 30px;
 	border-radius: 3px;
 	background: #eef1f7;
+	border: 1px solid #c8ccd2;
 	text-shadow: 0 1px 1px #fff;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .2), inset 0 -10px 20px rgba(0, 0, 0, .1);
 }
@@ -59,6 +59,7 @@ button:active {
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .2), inset 0 8px 20px rgba(0, 0, 0, .1);
 }
 
+select,
 textarea,
 input[type=tel],
 input[type=url],
@@ -67,7 +68,9 @@ input[type=email],
 input[type=number],
 input[type=password] {
 	resize: none;
+	outline: none;
 	margin: 4px 0;
+	color: #424b57;
 	min-width: 50%;
 	padding: 1px 4px;
 	border-radius: 3px;
@@ -81,12 +84,26 @@ input[type=url]:focus,
 input[type=text]:focus,
 input[type=email]:focus,
 input[type=password]:focus {
-	outline: none;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
 }
 
 textarea {
 	min-height: 120px;
+}
+
+select {
+	height: 30px;
+	min-width: 30%;
+	-webkit-appearance: none;
+	-webkit-padding-end: 20px;
+	-webkit-padding-start: 6px;
+	background: #eef1f7 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAQCAQAAAA/1a6rAAAAQUlEQVR4Xu3MsQnAMBAEMI1+myf9gw0+3ASCenmu+mQn2yGn3S4Mp906DEW3CEPfzTD03QxD380w3OmIUHe9v+u9QwAt93yns5cAAAAASUVORK5CYII=) no-repeat right center;
+	background-size: 24px 10px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .2), inset 0 -10px 20px rgba(0, 0, 0, .1);
+}
+
+select:active {
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .2), inset 0 8px 20px rgba(0, 0, 0, .1);
 }
 
 pre {
@@ -210,6 +227,7 @@ tr:last-child td {
 	color: #fff;
 	text-shadow: none;
 	background: #b5a2db;
+	border-color: #9582bb;
 }
 
 .color-success,
@@ -217,6 +235,7 @@ tr:last-child td {
 	color: #fff;
 	text-shadow: none;
 	background: #39c6c7;
+	border-color: #19a6a7;
 }
 
 .color-info,
@@ -224,6 +243,7 @@ tr:last-child td {
 	color: #fff;
 	text-shadow: none;
 	background: #5eb1ec;
+	border-color: #3e91cc;
 }
 
 .color-warning,
@@ -231,6 +251,7 @@ tr:last-child td {
 	color: #fff;
 	text-shadow: none;
 	background: #f29856;
+	border-color: #d27836;
 }
 
 .color-danger,
@@ -238,6 +259,7 @@ tr:last-child td {
 	color: #fff;
 	text-shadow: none;
 	background: #d57b81;
+	border-color: #b55b61;
 }
 
 .mask {
@@ -310,11 +332,15 @@ tr:last-child td {
 
 #logo {
 	margin: 0;
-	color: #eee;
-	padding: 0 20px;
 	font-size: 20px;
 	line-height: 64px;
 	background: #2b394e;
+}
+
+#logo .text{
+	color: #eee;
+	display: block;
+	padding: 0 20px;
 }
 
 #nav .menus {

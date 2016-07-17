@@ -94,7 +94,7 @@ exports.deleteProject = function (name, next) {
 	});
 };
 
-exports.buildProject = function (name, next) {
+exports.buildProject = function (name, operator, next) {
 	var project = exports.getProject(name);
 	var step;
 	var history;
@@ -110,7 +110,8 @@ exports.buildProject = function (name, next) {
 			historyId = historyLength;
 			history = histories[historyId] = {
 				start_time: Date.now(),
-				status: historyModule.STATUS_BUILDING
+				status: historyModule.STATUS_BUILDING,
+				operator: operator
 			};
 			project['histories'] = histories;
 			project['history_length'] = historyLength;
@@ -407,8 +408,9 @@ exports.getBuildEnv = function (name, historyId) {
 
 exports.checkPermission = function (user, project, next) {
 	var username = user['username'];
+	var managers = project['managers'] || [];
 	user = userModule.getUser(username);
-	if (user && user['is_admin'] && user['enabled']) {
+	if (user && user['is_admin'] && user['enabled'] || managers.indexOf(username) >= 0) {
 		next();
 	} else {
 		next(errFactory.unauthorized());

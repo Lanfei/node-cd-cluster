@@ -42,7 +42,9 @@
 					<a class="option" @click="buildProject(project, $index)" v-text="i18n('Build')"
 					   v-if="project['status'] < STATUS_UPDATING || project['status'] > STATUS_DEPLOYING"></a>
 					<a class="option" @click="abortProject(project, $index)" v-text="i18n('Abort')" v-else></a>
+					<% if (me['is_admin']) { %>
 					<a class="option" @click="editProject(project)" v-text="i18n('Configure')"></a>
+					<% } %>
 				</td>
 			</tr>
 			</tbody>

@@ -1,5 +1,6 @@
 (function () {
 	var API = '/api/projects';
+	var USER_API = '/api/users';
 
 	var vm = new Vue({
 		el: 'body',
@@ -8,12 +9,15 @@
 			project: {
 				repo_type: 'none',
 				deploy_nodes: [],
-				operation_scripts: []
+				operation_scripts: [],
+				managers: []
 			},
+			users: [],
 			backupNode: null,
 			editingNode: null,
 			backupScript: null,
-			editingScript: null
+			editingScript: null,
+			addingManager: null
 		},
 		methods: {
 			init: function () {
@@ -25,11 +29,15 @@
 				if (name) {
 					reqwest(API + '/' + name, function (res) {
 						var data = res['data'];
+						data['managers'] = data['managers'] || [];
 						data['deploy_nodes'] = data['deploy_nodes'] || [];
 						data['operation_scripts'] = data['operation_scripts'] || [];
 						self.project = data;
 					});
 				}
+				reqwest(USER_API, function (res) {
+					self.users = res['data'];
+				});
 			},
 			back: function () {
 				history.back();
@@ -112,6 +120,17 @@
 					this.project['operation_scripts'].pop();
 				}
 				this.editingScript = null;
+			},
+			addManager: function () {
+				var manager = this.addingManager;
+				var managers = this.project['managers'];
+				if (manager && managers.indexOf(manager) < 0) {
+					managers.push(manager);
+				}
+				this.addingManager = null;
+			},
+			removeManager: function (username) {
+				this.project['managers'].$remove(username);
 			},
 			handleSubmit: function (e) {
 				var name = this.name;

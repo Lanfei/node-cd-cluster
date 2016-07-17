@@ -133,6 +133,23 @@
 						</template>
 					</td>
 				</tr>
+				<tr>
+					<td v-text="i18n('Managers')" :rowspan="project['managers'].length + 1"></td>
+					<td align="left">
+						<select v-model="addingManager">
+							<option :value="null" v-text="i18n('Please Select A User')"></option>
+							<option :value="user['username']" v-text="user['username']" v-for="user in users"
+									v-if="project['managers'].indexOf(user['username']) < 0"></option>
+						</select>
+						<a class="option" @click="addManager" :disabled="!addingManager" v-text="i18n('Add Manager')"></a>
+					</td>
+				</tr>
+				<tr v-for="username in project['managers']">
+					<td align="left">
+						<span v-text="username"></span>
+						<a class="option" @click="removeManager(username)" v-text="i18n('Remove')"></a>
+					</td>
+				</tr>
 				<tr v-if="name">
 					<td v-text="i18n('Options')"></td>
 					<td align="left">
