@@ -274,7 +274,7 @@ exports.deployHandler = function (req, res, next) {
 			projectModule.checkPermission(req.user, project, next);
 		},
 		function (next) {
-			projectModule.deployProject(name, historyId, next);
+			projectModule.deployProject(name, historyId, null, next);
 		}
 	], function (err, result) {
 		if (err) {

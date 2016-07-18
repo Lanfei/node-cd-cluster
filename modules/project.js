@@ -323,6 +323,7 @@ exports.deployProject = function (name, historyId, nodes, next) {
 			requests: []
 		}
 	}
+	nodes = nodes || project['deploy_nodes'];
 	async.map(nodes, function (node, next) {
 		var data = {
 			name: name,

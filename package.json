@@ -1,6 +1,6 @@
 {
   "name": "cd-cluster",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A Continuous Deployment / Continuous Integration platform written in node.",
   "main": "index.js",
   "bin": {
