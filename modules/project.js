@@ -319,7 +319,7 @@ exports.deployProject = function (name, historyId, nodes, next) {
 	var stream = fs.createReadStream(buildPath);
 	if (!task) {
 		task = tasks[name] = {
-			historyId: historyId,
+			id: historyId,
 			requests: []
 		}
 	}
