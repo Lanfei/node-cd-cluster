@@ -100,14 +100,14 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="mask" :style="{display: executing || executionResult ? 'block' : null}"></div>
-	<div class="dialog" :style="{display: executing || executionResult ? 'block' : null}">
-		<div class="title" v-text="i18n('Execution Result')"></div>
-		<a class="close" @click="closeDialog"><i class="iconfont icon-close"></i></a>
-		<div class="content">
-			<pre v-html="executionResult"></pre>
-			<i class="loading" v-if="executing"></i>
-		</div>
+</div>
+<div class="mask" :style="{display: executing || executionResult ? 'block' : null}"></div>
+<div class="dialog" :style="{display: executing || executionResult ? 'block' : null}">
+	<div class="title" v-text="i18n('Execution Result')"></div>
+	<a class="close" @click="closeDialog"><i class="iconfont icon-close"></i></a>
+	<div class="content">
+		<pre v-html="executionResult"></pre>
+		<i class="loading" v-if="executing"></i>
 	</div>
 </div>
 <script src="/js/libs/vue.min.js"></script>

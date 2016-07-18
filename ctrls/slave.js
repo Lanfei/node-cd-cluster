@@ -38,7 +38,6 @@ exports.deployHandler = function (req, res, next) {
 		},
 		function (data, next) {
 			var zip = admZip(data);
-			deployResult += '\nDeploying files...\n\n';
 			zip.extractAllToAsync(cwd, true, next);
 		},
 		function (next) {

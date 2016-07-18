@@ -294,6 +294,7 @@ tr:last-child td {
 	color: #6a788c;
 	padding: 0 8px;
 	font-size: 16px;
+	text-align: left;
 	line-height: 40px;
 	font-weight: bold;
 	background: #eef1f7;
@@ -337,7 +338,7 @@ tr:last-child td {
 	background: #2b394e;
 }
 
-#logo .text{
+#logo .text {
 	color: #eee;
 	display: block;
 	padding: 0 20px;

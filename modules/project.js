@@ -86,15 +86,18 @@ exports.deleteProject = function (name, next) {
 	});
 };
 
-exports.buildProject = function (name, operator, next) {
+exports.buildProject = function (name, operator, params, next) {
 	var project = exports.getProject(name);
-	var step;
-	var history;
-	var historyId;
 	if (!project) {
 		next();
 		return;
 	}
+	var step;
+	var history;
+	var historyId;
+	var ignores;
+	var deployNodes;
+	params = params || {};
 	async.waterfall([
 		function (next) {
 			historyModule.addHistory(name, operator, next);
@@ -159,10 +162,15 @@ exports.buildProject = function (name, operator, next) {
 			historyModule.updateHistory(name, historyId, history, next);
 		},
 		function (next) {
-			historyModule.writeOutput(name, historyId, step, 'Creating zip file...\n', next);
+			ignores = params['ignores'];
+			if (!ignores && project['ignores']) {
+				ignores = project['ignores'].split('\n');
+			}
+			var ignoreStr = ignores.join('\n') || 'Empty';
+			historyModule.writeOutput(name, historyId, step, 'Creating zip file...\n\nIgnores:\n' + ignoreStr + '\n', next);
 		},
 		function (next) {
-			exports.packProject(name, historyId, project['ignores'], next);
+			exports.packProject(name, historyId, ignores, next);
 		},
 		function (next) {
 			history['build_url'] = historyModule.getBuildUrl(name, historyId);
@@ -177,7 +185,14 @@ exports.buildProject = function (name, operator, next) {
 			historyModule.updateHistory(name, historyId, history, next);
 		},
 		function (next) {
-			exports.deployProject(name, historyId, next);
+			deployNodes = params['deploy_nodes'] || project['deploy_nodes'];
+			var nodeStr = deployNodes.map(function (node) {
+					return node['host'] + ':' + node['port'];
+				}).join('\n') || 'Empty';
+			historyModule.writeOutput(name, historyId, step, 'Nodes:\n' + nodeStr + '\n\n', next);
+		},
+		function (next) {
+			exports.deployProject(name, historyId, deployNodes, next);
 		},
 		function (result, next) {
 			historyModule.writeOutput(name, historyId, step, result, next);
@@ -235,14 +250,14 @@ exports.abortProject = function (name, next) {
 };
 
 exports.packProject = function (name, historyId, ignores, next) {
-	var zipPath = historyModule.getBuildPath(name, historyId);
-	var workspace = exports.getWorkspace(name);
 	var project = exports.getProject(name);
-	var task = tasks[name];
 	if (!project) {
 		next();
 		return;
 	}
+	var task = tasks[name];
+	var workspace = exports.getWorkspace(name);
+	var zipPath = historyModule.getBuildPath(name, historyId);
 	async.waterfall([
 		function (next) {
 			fs.ensureDir(path.dirname(zipPath), next);
@@ -254,7 +269,7 @@ exports.packProject = function (name, historyId, ignores, next) {
 			var archive = archiver('zip', {});
 			var output = fs.createWriteStream(zipPath);
 			if (ignores) {
-				ignores = ignores.split('\n').map(function (item) {
+				ignores = ignores.map(function (item) {
 					if (item.slice(-1) === '/') {
 						item += '**';
 					}
@@ -293,14 +308,13 @@ exports.packProject = function (name, historyId, ignores, next) {
 	});
 };
 
-exports.deployProject = function (name, historyId, next) {
+exports.deployProject = function (name, historyId, nodes, next) {
 	var project = exports.getProject(name);
 	if (!project) {
 		next();
 		return;
 	}
 	var task = tasks[name];
-	var nodes = project['deploy_nodes'];
 	var buildPath = historyModule.getBuildPath(name, historyId);
 	var stream = fs.createReadStream(buildPath);
 	if (!task) {
@@ -454,7 +468,7 @@ function resolveNodeResults(results, nodes, next) {
 			}
 			if (res && res['error']) {
 				failed = true;
-				msg += '\n' + res['error_desc'] || res['error'];
+				msg += '\n\n' + res['error_desc'] || res['error'];
 			}
 			return '\u001b[1m' + host + ':\u001b[22m\n' + msg;
 		}).join('\n\n');

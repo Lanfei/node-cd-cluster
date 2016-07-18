@@ -81,6 +81,16 @@
 		});
 	}
 
+	Vue.directive('display', {
+		update: function (value) {
+			if (value) {
+				this.el.style.display = this.arg;
+			} else {
+				this.el.style.display = 'none';
+			}
+		}
+	});
+
 	Vue.filter('datetime', function (time) {
 		var d = new Date(time);
 		if (!d.getTime()) {

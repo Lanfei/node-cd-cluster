@@ -5,6 +5,9 @@
 		el: 'body',
 		data: {
 			projects: [],
+			curIndex: null,
+			curParams: null,
+			curProject: null,
 			STATUS_INITIAL: 0,
 			STATUS_UPDATING: 1,
 			STATUS_BUILDING: 2,
@@ -36,14 +39,34 @@
 			editProject: function (project) {
 				location.href = '/projects/' + project['name'] + '/edit';
 			},
-			buildProject: function (project, index) {
+			chooseProject: function (project, index) {
+				var params = {};
+				if (project.ignores) {
+					params['ignores'] = project.ignores.trim().split('\n');
+				} else {
+					params['ignores'] = [];
+					project['ignores'] = '';
+				}
+				if (project['deploy_nodes']) {
+					params['deploy_nodes'] = project['deploy_nodes'].concat();
+				} else {
+					params['deploy_nodes'] = [];
+					project['deploy_nodes'] = [];
+				}
+				this.curIndex = index;
+				this.curParams = params;
+				this.curProject = project;
+			},
+			buildProject: function () {
 				var self = this;
-				var name = project['name'];
+				var name = this.curProject['name'];
 				reqwest({
 					url: API + '/' + name + '/build',
 					method: 'post',
+					data: JSON.stringify(this.curParams),
 					success: function () {
-						self.checkStatus(index);
+						self.closeDialog();
+						self.checkStatus(self.curIndex);
 					},
 					error: function (err) {
 						console.log(err);
@@ -63,6 +86,26 @@
 						console.log(err);
 					}
 				});
+			},
+			toggleIgnore: function (ignore, e) {
+				var params = this.curParams;
+				if (e.target.checked) {
+					params['ignores'].push(ignore);
+				} else {
+					params['ignores'].$remove(ignore);
+				}
+			},
+			toggleNode: function (node, e) {
+				var params = this.curParams;
+				if (e.target.checked) {
+					params['deploy_nodes'].push(node);
+				} else {
+					params['deploy_nodes'].$remove(node);
+				}
+				console.log(JSON.stringify(params))
+			},
+			closeDialog: function () {
+				this.curProject = null;
 			},
 			checkStatus: function (index) {
 				var self = this;

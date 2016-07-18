@@ -220,7 +220,10 @@ exports.buildHandler = function (req, res, next) {
 			}
 		},
 		function (next) {
-			projectModule.buildProject(name, username);
+			utils.receiveJSON(req, next);
+		},
+		function (params, next) {
+			projectModule.buildProject(name, username, params);
 			next();
 		}
 	], function (err) {
