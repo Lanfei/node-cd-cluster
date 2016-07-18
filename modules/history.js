@@ -71,6 +71,18 @@ exports.updateHistory = function (name, id, data, next) {
 	utils.writeConfig('histories', histories, next);
 };
 
+exports.setHistorySize = function (name, size, next) {
+	var historyList = histories[name] || [];
+	var trash;
+	if (historyList.length > size) {
+		trash = historyList.splice(0, historyList.length - size);
+	}
+	async.each(trash, function (history, next) {
+		var id = history['id'];
+		exports.removeHistory(name, id, next);
+	}, next);
+};
+
 exports.getOutputDir = function (name, id) {
 	var dir = utils.getConfigDir() + '/outputs/' + name;
 	if (id) {

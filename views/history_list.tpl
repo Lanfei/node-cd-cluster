@@ -17,8 +17,8 @@
 		<table>
 			<thead>
 			<tr>
-				<th v-text="i18n('Build ID')"></th>
 				<th v-text="i18n('Project Name')"></th>
+				<th v-text="i18n('Build ID')"></th>
 				<th v-text="i18n('Start Time')"></th>
 				<th v-text="i18n('Duration')"></th>
 				<th v-text="i18n('Status')"></th>
@@ -27,11 +27,11 @@
 			<tbody>
 			<tr v-for="history in histories | orderBy 'start_time' -1" track-by="$index">
 				<td>
-					<a :href="'/projects/' + history['project'] + '/histories/' + history['id']"
-					   v-text="'#' + history['id']"></a>
+					<a :href="'/projects/' + history['project']" v-text="history['project']"></a>
 				</td>
 				<td>
-					<a :href="'/projects/' + history['project']" v-text="history['project']"></a>
+					<a :href="'/projects/' + history['project'] + '/histories/' + history['id']"
+					   v-text="'#' + history['id']"></a>
 				</td>
 				<td v-text="history['start_time'] | datetime"></td>
 				<td v-text="history['duration'] | duration"></td>
@@ -44,7 +44,7 @@
 		</table>
 	</div>
 </div>
-<script src="/js/libs/vue.js"></script>
+<script src="/js/libs/vue.min.js"></script>
 <script src="/js/libs/reqwest.min.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/history_list.js"></script>

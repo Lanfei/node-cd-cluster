@@ -51,7 +51,7 @@
 		</table>
 	</div>
 </div>
-<script src="/js/libs/vue.js"></script>
+<script src="/js/libs/vue.min.js"></script>
 <script src="/js/libs/reqwest.min.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/user_list.js"></script>

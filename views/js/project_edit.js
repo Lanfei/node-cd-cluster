@@ -10,7 +10,8 @@
 				repo_type: 'none',
 				deploy_nodes: [],
 				operation_scripts: [],
-				managers: []
+				managers: [],
+				history_size: 100
 			},
 			users: [],
 			backupNode: null,

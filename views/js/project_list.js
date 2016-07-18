@@ -72,10 +72,10 @@
 				reqwest(API + '/' + name + '/status', function (res) {
 					var data = res['data'];
 					var status = data['status'];
-					project['status'] =  status;
+					project['status'] = status || self.STATUS_INITIAL;
 					project['last_build_id'] = data['id'];
-					project['last_duration'] =  data['duration'];
-					project['last_build_time'] =  data['start_time'];
+					project['last_duration'] = data['duration'];
+					project['last_build_time'] = data['start_time'];
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
 						setTimeout(function () {
 							self.checkStatus(index);

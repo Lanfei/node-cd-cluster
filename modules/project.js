@@ -102,6 +102,9 @@ exports.buildProject = function (name, operator, next) {
 		function (data, next) {
 			history = data;
 			historyId = history['id'];
+			historyModule.setHistorySize(name, +project['history_size'] || 1, next);
+		},
+		function (next) {
 			history['status'] = historyModule.STATUS_UPDATING;
 			historyModule.updateHistory(name, historyId, history, next);
 		},
@@ -199,6 +202,7 @@ exports.abortProject = function (name, next) {
 		var historyId = task['id'];
 		var process = task['process'];
 		var archive = task['archive'];
+		var request = task['request'];
 		var history = historyModule.getHistory(name, historyId);
 
 		function updateHistory() {
@@ -206,7 +210,10 @@ exports.abortProject = function (name, next) {
 			historyModule.updateHistory(name, historyId, history, next);
 		}
 
-		if (archive) {
+		if (request) {
+			request.abort();
+			updateHistory();
+		} else if (archive) {
 			archive.abort();
 			updateHistory();
 		} else if (process) {
@@ -279,7 +286,7 @@ exports.packProject = function (name, historyId, ignores, next) {
 			}
 		}
 	], function (err) {
-		if (task['archive']) {
+		if (task && task['archive']) {
 			delete tasks[name];
 		}
 		next(err);
@@ -292,9 +299,16 @@ exports.deployProject = function (name, historyId, next) {
 		next();
 		return;
 	}
+	var task = tasks[name];
 	var nodes = project['deploy_nodes'];
 	var buildPath = historyModule.getBuildPath(name, historyId);
 	var stream = fs.createReadStream(buildPath);
+	if (!task) {
+		task = tasks[name] = {
+			historyId: historyId,
+			requests: []
+		}
+	}
 	async.map(nodes, function (node, next) {
 		var data = {
 			name: name,
@@ -329,7 +343,13 @@ exports.deployProject = function (name, historyId, next) {
 			}
 		});
 		stream.pipe(req);
+		if (task) {
+			task['requests'].push(req);
+		}
 	}, function (err, results) {
+		if (task && task['requests']) {
+			delete task[name];
+		}
 		if (err) {
 			next(err);
 		} else {

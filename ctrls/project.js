@@ -7,7 +7,7 @@ var userModule = require('../modules/user');
 var projectModule = require('../modules/project');
 var historyModule = require('../modules/history');
 
-var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'managers'];
+var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'managers', 'history_size'];
 
 exports.getListViewHandler = function (req, res) {
 	var me = userModule.getUser(req.user['username']);
@@ -212,7 +212,8 @@ exports.buildHandler = function (req, res, next) {
 		},
 		function (next) {
 			var latestHistory = historyModule.getLatestHistory(project) || {};
-			if (latestHistory['status'] === historyModule.STATUS_BUILDING) {
+			var status = latestHistory['status'];
+			if (status >= historyModule.STATUS_UPDATING && status <= historyModule.STATUS_DEPLOYING) {
 				next(errFactory.conflictError('The project is building now'));
 			} else {
 				next();
@@ -326,7 +327,7 @@ exports.getStatusHandler = function (req, res, next) {
 			next(err);
 		} else {
 			res.json({
-				data: historyModule.getLatestHistory(project['name'])
+				data: historyModule.getLatestHistory(project['name']) || {}
 			});
 		}
 	});

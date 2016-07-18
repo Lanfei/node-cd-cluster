@@ -101,8 +101,9 @@
 					</td>
 				</tr>
 				<tr>
-					<td v-text="i18n('Ignored Files/Paths')"></td>
-					<td align="left"><textarea v-model="project['ignores']"></textarea></td>
+					<td v-text="i18n('Ignores')"></td>
+					<td align="left"><textarea v-model="project['ignores']"
+											   placeholder="Files or directories, globs are supported."></textarea></td>
 				</tr>
 				<tr>
 					<td v-text="i18n('Pre-Deploy Scripts')"></td>
@@ -157,6 +158,12 @@
 						<a class="option" @click="removeManager(username)" v-text="i18n('Remove')"></a>
 					</td>
 				</tr>
+				<tr>
+					<td v-text="i18n('History Size')"></td>
+					<td align="left">
+						<input type="number" v-model="project['history_size']">
+					</td>
+				</tr>
 				<tr v-if="name">
 					<td v-text="i18n('Options')"></td>
 					<td align="left">
@@ -176,7 +183,7 @@
 		</div>
 	</form>
 </div>
-<script src="/js/libs/vue.js"></script>
+<script src="/js/libs/vue.min.js"></script>
 <script src="/js/libs/reqwest.min.js"></script>
 <script src="/js/common.js"></script>
 <script src="/js/project_edit.js"></script>
