@@ -145,7 +145,7 @@ exports.getBuildDir = function (name) {
 };
 
 exports.getBuildPath = function (name, id) {
-	return exports.getBuildDir(name) + '/' + id + '.zip';
+	return exports.getBuildDir(name) + '/' + id + '.tar.gz';
 };
 
 exports.getBuildUrl = function (name, id) {

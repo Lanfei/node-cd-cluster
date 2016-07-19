@@ -1,6 +1,7 @@
+var zlib = require('zlib');
+var tar = require('tar-fs');
 var fs = require('fs-extra');
 var async = require('async');
-var admZip = require('adm-zip');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
@@ -34,11 +35,7 @@ exports.deployHandler = function (req, res, next) {
 		},
 		function (output, next) {
 			deployResult += output;
-			utils.receiveBody(req, next);
-		},
-		function (data, next) {
-			var zip = admZip(data);
-			zip.extractAllToAsync(cwd, true, next);
+			req.pipe(zlib.Gunzip()).pipe(tar.extract(cwd)).on('finish', next);
 		},
 		function (next) {
 			runCommand('post-deploy', postDeployScripts, cwd, env, next);

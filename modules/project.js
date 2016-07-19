@@ -1,8 +1,10 @@
+var zlib = require('zlib');
 var path = require('path');
 var http = require('http');
+var tar = require('tar-fs');
 var fs = require('fs-extra');
 var async = require('async');
-var archiver = require('archiver');
+var minimatch = require("minimatch");
 var querystring = require('querystring');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
@@ -167,7 +169,7 @@ exports.buildProject = function (name, operator, params, next) {
 				ignores = project['ignores'].split('\n');
 			}
 			var ignoreStr = ignores.join('\n') || 'Empty';
-			historyModule.writeOutput(name, historyId, step, 'Creating zip file...\n\nIgnores:\n' + ignoreStr + '\n', next);
+			historyModule.writeOutput(name, historyId, step, 'Packing files...\n\nIgnores:\n' + ignoreStr + '\n', next);
 		},
 		function (next) {
 			exports.packProject(name, historyId, ignores, next);
@@ -229,7 +231,7 @@ exports.abortProject = function (name, next) {
 			request.abort();
 			updateHistory();
 		} else if (archive) {
-			archive.abort();
+			archive.destroy();
 			updateHistory();
 		} else if (process) {
 			if (process.killed || process.exitCode !== null) {
@@ -257,17 +259,12 @@ exports.packProject = function (name, historyId, ignores, next) {
 	}
 	var task = tasks[name];
 	var workspace = exports.getWorkspace(name);
-	var zipPath = historyModule.getBuildPath(name, historyId);
+	var buildPath = historyModule.getBuildPath(name, historyId);
 	async.waterfall([
 		function (next) {
-			fs.ensureDir(path.dirname(zipPath), next);
+			fs.ensureDir(path.dirname(buildPath), next);
 		},
 		function (made, next) {
-			fs.remove(zipPath, next);
-		},
-		function (next) {
-			var archive = archiver('zip', {});
-			var output = fs.createWriteStream(zipPath);
 			if (ignores) {
 				ignores = ignores.map(function (item) {
 					if (item.slice(-1) === '/') {
@@ -276,28 +273,28 @@ exports.packProject = function (name, historyId, ignores, next) {
 					return item;
 				});
 			}
+			var archive = tar.pack(workspace, {
+				ignore: function (filename) {
+					for (var i = 0, l = ignores.length; i < l; ++i) {
+						var relative = path.relative(workspace, filename);
+						try {
+							if (fs.statSync(filename).isDirectory()) {
+								relative += '/';
+							}
+						} catch (e) {
+						}
+						if (minimatch(relative, ignores[i])) {
+							return true;
+						}
+					}
+				}
+			});
+			archive.pipe(zlib.Gzip()).pipe(fs.createWriteStream(buildPath)).on('finish', next);
 			if (!task) {
 				task = tasks[name] = {
 					id: historyId,
 					archive: archive
 				};
-			}
-			try {
-				archive.bulk([
-					{
-						src: '**/*',
-						expand: true,
-						ignore: ignores,
-						cwd: workspace
-					}
-				]);
-				archive.pipe(output);
-				archive.finalize();
-				output.on('close', next);
-				archive.on('error', next);
-			} catch (e) {
-				next(e);
-				output.end();
 			}
 		}
 	], function (err) {
