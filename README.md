@@ -23,9 +23,6 @@ Options:
     -h, --help           output usage information
     -t, --token [token]  a token used to verify requests
 
-[npm-url]: https://npmjs.org/package/cd-cluster
-[npm-image]: https://badge.fury.io/js/cd-cluster.svg
-
 ### Master Side
 
 ```sh
@@ -33,3 +30,6 @@ cd-master start [port=8080]
 ```
 
 Visit `http://hostname:port` and enjoy.
+
+[npm-url]: https://npmjs.org/package/cd-cluster
+[npm-image]: https://badge.fury.io/js/cd-cluster.svg
