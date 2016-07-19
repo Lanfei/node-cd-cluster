@@ -51,7 +51,7 @@ exports.receiveBody = function (stream, next) {
 exports.receiveJSON = function (stream, next) {
 	exports.receiveBody(stream, function (err, body) {
 		var data;
-		if (body) {
+		if (body && body.length) {
 			try {
 				data = JSON.parse(body);
 			} catch (e) {

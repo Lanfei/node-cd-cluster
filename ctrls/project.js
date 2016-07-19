@@ -7,7 +7,7 @@ var userModule = require('../modules/user');
 var projectModule = require('../modules/project');
 var historyModule = require('../modules/history');
 
-var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'managers', 'history_size'];
+var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'remote_build_enabled', 'remote_build_token', 'history_size', 'managers'];
 
 exports.getListViewHandler = function (req, res) {
 	var me = userModule.getUser(req.user['username']);
@@ -200,15 +200,24 @@ exports.cleanHandler = function (req, res, next) {
 
 exports.buildHandler = function (req, res, next) {
 	var project;
+	var user = req.user || {};
 	var name = req.params['name'];
-	var username = req.user['username'];
+	var token = req.query['token'] || '';
+	var username = user['username'];
 	async.waterfall([
 		function (next) {
 			checkProject(name, next);
 		},
 		function (data, next) {
 			project = data;
-			projectModule.checkPermission(req.user, project, next);
+			var remoteBuildEnabled = project['remote_build_enabled'];
+			var remoteBuildToken = project['remote_build_token'] || '';
+			if (remoteBuildEnabled && token === remoteBuildToken) {
+				username = username || '<Remote Build>';
+				next();
+			} else {
+				projectModule.checkPermission(user, project, next);
+			}
 		},
 		function (next) {
 			var latestHistory = historyModule.getLatestHistory(project) || {};

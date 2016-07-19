@@ -141,6 +141,27 @@
 					</td>
 				</tr>
 				<tr>
+					<td v-text="i18n('Remote Build')"></td>
+					<td align="left">
+						<label>
+							<input type="checkbox" v-model="project['remote_build_enabled']">
+							Enabled
+						</label>
+					</td>
+				</tr>
+				<tr v-if="project['remote_build_enabled']">
+					<td v-text="i18n('Remote Build Token')"></td>
+					<td align="left">
+						<input type="text" v-model="project['remote_build_token']">
+					</td>
+				</tr>
+				<tr>
+					<td v-text="i18n('History Size')"></td>
+					<td align="left">
+						<input type="number" v-model="project['history_size']">
+					</td>
+				</tr>
+				<tr>
 					<td v-text="i18n('Managers')" :rowspan="project['managers'].length + 1"></td>
 					<td align="left">
 						<select v-model="addingManager">
@@ -156,12 +177,6 @@
 					<td align="left">
 						<span v-text="username"></span>
 						<a class="option" @click="removeManager(username)" v-text="i18n('Remove')"></a>
-					</td>
-				</tr>
-				<tr>
-					<td v-text="i18n('History Size')"></td>
-					<td align="left">
-						<input type="number" v-model="project['history_size']">
 					</td>
 				</tr>
 				<tr v-if="name">

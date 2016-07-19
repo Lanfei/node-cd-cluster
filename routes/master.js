@@ -36,7 +36,7 @@ router.delete('/projects/:name', token.verifier, projectCtrl.deleteItemHandler);
 
 router.post('/projects/:name/clean', token.verifier, projectCtrl.cleanHandler);
 
-router.post('/projects/:name/build', token.verifier, projectCtrl.buildHandler);
+router.post('/projects/:name/build', token.decoder, projectCtrl.buildHandler);
 
 router.post('/projects/:name/abort', token.verifier, projectCtrl.abortHandler);
 
