@@ -6,7 +6,6 @@ var token = require('../libs/token');
 var errFactory = require('../libs/err_factory');
 var authCtrl = require('../ctrls/auth');
 var userCtrl = require('../ctrls/user');
-var indexCtrl = require('../ctrls/index');
 var historyCtrl = require('../ctrls/history');
 var projectCtrl = require('../ctrls/project');
 var profileCtrl = require('../ctrls/profile');
@@ -15,7 +14,7 @@ var router = express.Router();
 
 var VIEWS_DIR = router.VIEWS_DIR = path.join(__dirname, '../views');
 
-router.get('/', token.verifier, indexCtrl.getViewHandler);
+router.get('/', token.verifier, projectCtrl.getListViewHandler);
 
 router.get('/signup', authCtrl.getSignupViewHandler);
 

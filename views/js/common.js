@@ -41,11 +41,6 @@
 			data: {
 				curPage: '',
 				menus: [{
-					name: 'index',
-					icon: 'dashboard',
-					label: 'Dashboard',
-					link: '/'
-				}, {
 					name: 'projects',
 					icon: 'project',
 					label: 'Projects',

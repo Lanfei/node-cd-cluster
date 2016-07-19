@@ -168,8 +168,8 @@ exports.buildProject = function (name, operator, params, next) {
 			if (!ignores && project['ignores']) {
 				ignores = project['ignores'].split('\n');
 			}
-			var ignoreStr = ignores.join('\n') || 'Empty';
-			historyModule.writeOutput(name, historyId, step, 'Packing files...\n\nIgnores:\n' + ignoreStr + '\n', next);
+			var ignoreStr = ignores.join('    \n') || 'Empty';
+			historyModule.writeOutput(name, historyId, step, 'Packing files...\n\nIgnores:\n    ' + ignoreStr + '\n', next);
 		},
 		function (next) {
 			exports.packProject(name, historyId, ignores, next);
@@ -189,15 +189,15 @@ exports.buildProject = function (name, operator, params, next) {
 		function (next) {
 			deployNodes = params['deploy_nodes'] || project['deploy_nodes'];
 			var nodeStr = deployNodes.map(function (node) {
-					return node['host'] + ':' + node['port'];
+					return '    ' + node['host'] + ':' + node['port'];
 				}).join('\n') || 'Empty';
-			historyModule.writeOutput(name, historyId, step, 'Nodes:\n' + nodeStr + '\n\n', next);
+			historyModule.writeOutput(name, historyId, step, 'Nodes:\n' + nodeStr + '\n', next);
 		},
 		function (next) {
 			exports.deployProject(name, historyId, deployNodes, next);
 		},
 		function (result, next) {
-			historyModule.writeOutput(name, historyId, step, result, next);
+			historyModule.writeOutput(name, historyId, step, '\n' + result, next);
 		}
 	], function (err) {
 		var startTime = history['start_time'];
