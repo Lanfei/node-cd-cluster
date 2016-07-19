@@ -21,6 +21,7 @@
 				<th v-text="i18n('Build ID')"></th>
 				<th v-text="i18n('Start Time')"></th>
 				<th v-text="i18n('Duration')"></th>
+				<th v-text="i18n('Operator')"></th>
 				<th v-text="i18n('Status')"></th>
 			</tr>
 			</thead>
@@ -35,6 +36,7 @@
 				</td>
 				<td v-text="history['start_time'] | datetime"></td>
 				<td v-text="history['duration'] | duration"></td>
+				<td v-text="history['operator']"></td>
 				<td>
 					<a class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"
 					   :href="'/projects/' + history['project'] + '/histories/' + history['id']"></a>
