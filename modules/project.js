@@ -433,7 +433,7 @@ exports.getWorkspace = function (name) {
 };
 
 exports.getBuildEnv = function (name, historyId) {
-	var project = exports.getProject(name);
+	var project = exports.getProject(name) || {};
 	return utils.extend({}, process.env, {
 		PROJECT_NAME: name,
 		BUILD_ID: historyId
