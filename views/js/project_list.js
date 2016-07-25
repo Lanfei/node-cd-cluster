@@ -68,8 +68,13 @@
 						self.closeDialog();
 						self.checkStatus(self.curIndex);
 					},
-					error: function (err) {
-						console.log(err);
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},
@@ -82,8 +87,13 @@
 					success: function () {
 						self.checkStatus(index);
 					},
-					error: function (err) {
-						console.log(err);
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},
@@ -102,7 +112,6 @@
 				} else {
 					params['deploy_nodes'].$remove(node);
 				}
-				console.log(JSON.stringify(params))
 			},
 			closeDialog: function () {
 				this.curProject = null;

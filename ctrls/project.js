@@ -7,7 +7,7 @@ var userModule = require('../modules/user');
 var projectModule = require('../modules/project');
 var historyModule = require('../modules/history');
 
-var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'remote_build_enabled', 'remote_build_token', 'history_size', 'managers'];
+var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'env_vars', 'remote_build_enabled', 'remote_build_token', 'history_size', 'managers'];
 
 exports.getListViewHandler = function (req, res) {
 	var me = userModule.getUser(req.user['username']);

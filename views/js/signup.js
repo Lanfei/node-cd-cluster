@@ -15,8 +15,13 @@
 					success: function () {
 						location.href = '/';
 					},
-					error: function () {
-						console.error('error');
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},

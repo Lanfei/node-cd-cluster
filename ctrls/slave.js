@@ -15,10 +15,14 @@ exports.deployHandler = function (req, res, next) {
 	var host = req.query['host'];
 	var token = req.query['token'] || '';
 	var historyId = req.query['history_id'];
+	var envVars = req.query['env_vars'] || [];
 	var preDeployScripts = req.query['pre_deploy_scripts'];
 	var postDeployScripts = req.query['post_deploy_scripts'];
 	var deployResult = '';
 	var env = projectModule.getBuildEnv(name, historyId);
+	utils.forEach(envVars, function (variable) {
+		env[variable['key']] = variable['value'];
+	});
 	async.waterfall([
 		function (next) {
 			if (token === expectedToken) {
@@ -60,7 +64,11 @@ exports.executeHandler = function (req, res, next) {
 	var name = req.query['name'];
 	var command = req.query['command'];
 	var token = req.query['token'] || '';
+	var envVars = req.query['env_vars'] || [];
 	var env = projectModule.getBuildEnv(name);
+	utils.forEach(envVars, function (variable) {
+		env[variable['key']] = variable['value'];
+	});
 	async.waterfall([
 		function (next) {
 			if (token === expectedToken) {

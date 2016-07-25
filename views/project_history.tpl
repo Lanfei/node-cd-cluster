@@ -7,6 +7,7 @@
 </head>
 <body>
 <%- include('sidebar') %>
+<div id="toast-wrapper"><label id="toast"></label></div>
 <div id="header">
 	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>

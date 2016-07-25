@@ -30,8 +30,13 @@
 					success: function () {
 						location.href = '/users';
 					},
-					error: function () {
-
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},

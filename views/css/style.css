@@ -378,6 +378,30 @@ tr:last-child td {
 	color: #c5d0de;
 }
 
+#toast-wrapper {
+	top: -35px;
+	z-index: 9;
+	width: 100%;
+	position: fixed;
+	text-align: center;
+	transition: all .2s;
+}
+
+#toast {
+	color: #333;
+	padding: 0 20px;
+	min-width: 100px;
+	background: #eee;
+	line-height: 30px;
+	display: inline-block;
+	background: rgba(255, 255, 255, .9);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+}
+
+#toast-wrapper.show {
+	top: 0;
+}
+
 #header {
 	top: 0;
 	left: 0;

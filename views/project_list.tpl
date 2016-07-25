@@ -8,6 +8,7 @@
 </head>
 <body>
 <%- include('sidebar') %>
+<div id="toast-wrapper"><label id="toast"></label></div>
 <div id="header">
 	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
@@ -70,7 +71,7 @@
 					<td align="left">
 						<label v-if="curProject['ignores']" v-for="ignore in curProject['ignores'].split('\n')">
 							<input type="checkbox" @change="toggleIgnore(ignore, $event)" checked>
-							<span v-text="ignore"></span>
+							<span v-text="ignore"></span><br>
 						</label>
 						<span v-if="!curProject['ignores']" v-text="i18n('Empty')"></span>
 					</td>
@@ -80,7 +81,7 @@
 					<td align="left">
 						<label v-for="node in curProject['deploy_nodes']">
 							<input type="checkbox" @change="toggleNode(node, $event)" checked>
-							<span v-text="node['host'] + ':' + node['port']"></span>
+							<span v-text="node['host'] + ':' + node['port']"></span><br>
 						</label>
 						<span v-if="!curProject['deploy_nodes'].length" v-text="i18n('Empty')"></span>
 					</td>

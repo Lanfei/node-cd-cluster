@@ -28,14 +28,14 @@ exports.getHistories = function () {
 	return histories;
 };
 
-exports.addHistory = function (name, operator, next) {
+exports.addHistory = function (name, operator, status, next) {
 	var historyList = histories[name] || [];
 	var lastItem = historyList[historyList.length - 1] || {};
 	var lastId = lastItem['id'] || 0;
 	var id = lastId + 1;
 	var history = {
 		id: id,
-		status: exports.STATUS_INITIAL,
+		status: status || exports.STATUS_INITIAL,
 		operator: operator,
 		start_time: Date.now()
 	};

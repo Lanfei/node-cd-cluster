@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/css/iconfont.css">
 </head>
 <body>
+<div id="toast-wrapper"><label id="toast"></label></div>
 <div id="auth">
 	<h1 class="title">CD Cluster</h1>
 	<form class="table-wrapper" @submit.prevent="submit">

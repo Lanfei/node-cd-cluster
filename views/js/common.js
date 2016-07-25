@@ -30,6 +30,16 @@
 			}
 			return target;
 		},
+		showToast: function (message) {
+			var toast = document.getElementById('toast');
+			var wrapper = document.getElementById('toast-wrapper');
+			toast.innerHTML = message;
+			wrapper.className = 'show';
+			clearTimeout(utils.showToast.timer);
+			utils.showToast.timer = setTimeout(function () {
+				wrapper.className = '';
+			}, 1800);
+		},
 		i18n: function (str) {
 			return str;
 		}

@@ -10,6 +10,7 @@
 				repo_type: 'none',
 				deploy_nodes: [],
 				operation_scripts: [],
+				env_vars: [],
 				managers: [],
 				history_size: 100
 			},
@@ -18,7 +19,9 @@
 			editingNode: null,
 			backupScript: null,
 			editingScript: null,
-			addingManager: null
+			addingManager: null,
+			backupVariable: null,
+			editingVariable: null
 		},
 		methods: {
 			init: function () {
@@ -31,6 +34,7 @@
 					reqwest(API + '/' + name, function (res) {
 						var data = res['data'];
 						data['managers'] = data['managers'] || [];
+						data['env_vars'] = data['env_vars'] || [];
 						data['deploy_nodes'] = data['deploy_nodes'] || [];
 						data['operation_scripts'] = data['operation_scripts'] || [];
 						self.project = data;
@@ -122,6 +126,44 @@
 				}
 				this.editingScript = null;
 			},
+			addVariable: function () {
+				if (!this.editingVariable) {
+					var variable = {};
+					this.editingVariable = variable;
+					this.project['env_vars'].push(variable);
+				}
+			},
+			editVariable: function (variable) {
+				this.editingVariable = variable;
+				this.backupVariable = utils.extend({}, variable);
+			},
+			deleteVariable: function (variable) {
+				if (confirm(utils.i18n('Are you sure?'))) {
+					this.backupVariable = null;
+					this.editingVariable = null;
+					this.project['env_vars'].$remove(variable);
+				}
+			},
+			updateVariable: function () {
+				var variable = this.editingVariable;
+				if (!variable['key']) {
+					alert(utils.i18n('Please fill in the key'));
+				} else if (!variable['value']) {
+					alert(utils.i18n('Please fill in the value'));
+				} else {
+					this.backupVariable = null;
+					this.editingVariable = null;
+				}
+			},
+			restoreVariable: function () {
+				if (this.backupVariable) {
+					utils.extend(this.editingVariable, this.backupVariable);
+					this.backupVariable = null;
+				} else {
+					this.project['env_vars'].pop();
+				}
+				this.editingVariable = null;
+			},
 			addManager: function () {
 				var manager = this.addingManager;
 				var managers = this.project['managers'];
@@ -145,8 +187,13 @@
 					success: function () {
 						location.href = '/projects';
 					},
-					error: function (err) {
-						console.log(err);
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},
@@ -160,8 +207,13 @@
 					method: 'post',
 					success: function () {
 					},
-					error: function (err) {
-						console.log(err);
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},
@@ -176,8 +228,13 @@
 					success: function () {
 						location.href = '/projects';
 					},
-					error: function (err) {
-						console.log(err);
+					error: function (xhr) {
+						try {
+							var res = JSON.parse(xhr.responseText);
+							utils.showToast(res['error_desc'] || res['error']);
+						} catch (e) {
+							utils.showToast(xhr['statusText']);
+						}
 					}
 				});
 			},

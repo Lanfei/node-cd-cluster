@@ -4,7 +4,7 @@ var token = require('../libs/token');
 var errFactory = require('../libs/err_factory');
 var userModule = require('../modules/user');
 
-var users = userModule.users;
+var users = userModule.getUsers();
 
 exports.getSignupViewHandler = function (req, res) {
 	res.render('signup');
@@ -80,7 +80,7 @@ exports.loginHandler = function (req, res, next) {
 			if (user && user['password'] === token.md5(password) && user['enabled']) {
 				next();
 			} else {
-				next(errFactory.unauthorized());
+				next(errFactory.unauthorized('Incorrect username or password'));
 			}
 		},
 		function (next) {
@@ -99,10 +99,6 @@ exports.loginHandler = function (req, res, next) {
 		}
 	});
 };
-
-function checkUser() {
-
-}
 
 function checkConflict(username, next) {
 	var user = userModule.getUser(username);

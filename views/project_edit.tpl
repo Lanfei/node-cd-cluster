@@ -8,6 +8,7 @@
 </head>
 <body>
 <%- include('sidebar') %>
+<div id="toast-wrapper"><label id="toast"></label></div>
 <div id="header">
 	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
@@ -65,7 +66,7 @@
 				<tr>
 					<td v-text="i18n('Deploy Nodes')" :rowspan="project['deploy_nodes'].length + 1"></td>
 					<td align="left">
-						<a @click="addNode" :disabled="!!editingNode" v-text="i18n('New Node')"></a>
+						<a @click="addNode" :disabled="!!editingNode" v-text="i18n('Add Node')"></a>
 					</td>
 				</tr>
 				<tr v-for="node in project['deploy_nodes']">
@@ -116,7 +117,7 @@
 				<tr>
 					<td v-text="i18n('Operation Scripts')" :rowspan="project['operation_scripts'].length + 1"></td>
 					<td align="left">
-						<a @click="addScript" :disabled="!!editingScript" v-text="i18n('New Script')"></a>
+						<a @click="addScript" :disabled="!!editingScript" v-text="i18n('Add Script')"></a>
 					</td>
 				</tr>
 				<tr v-for="item in project['operation_scripts']">
@@ -137,6 +138,35 @@
 							</label>
 							<button type="button" class="color-info" @click="updateScript">Apply</button>
 							<button type="button" @click="restoreScript">Cancel</button>
+						</template>
+					</td>
+				</tr>
+				<tr>
+					<td v-text="i18n('Environment Variables')" :rowspan="project['env_vars'].length + 1"></td>
+					<td align="left">
+						<a @click="addVariable" :disabled="!!editingVariable" v-text="i18n('Add Variable')"></a>
+					</td>
+				</tr>
+				<tr v-for="variable in project['env_vars']">
+					<td align="left">
+						<template v-if="variable !== editingVariable">
+							<span v-text="variable['key'] + '=' + variable['value']"></span>
+							<a class="option" @click="editVariable(variable)" :disabled="!!editingVariable">Edit</a>
+							<a class="option" @click="deleteVariable(variable)" :disabled="!!editingVariable">Delete</a>
+						</template>
+						<template v-else>
+							<label>
+								<span v-text="i18n('Key:')"></span><br>
+								<input type="text" v-model="variable['key']" @keydown.enter.prevent="updateVariable"
+									   required><br>
+							</label>
+							<label>
+								<span v-text="i18n('Value:')"></span><br>
+								<input type="text" v-model="variable['value']" @keydown.enter.prevent="updateVariable"
+									   required><br>
+							</label>
+							<button type="button" class="color-info" @click="updateVariable">Apply</button>
+							<button type="button" @click="restoreVariable">Cancel</button>
 						</template>
 					</td>
 				</tr>

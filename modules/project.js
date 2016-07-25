@@ -1,3 +1,4 @@
+var qs = require('qs');
 var zlib = require('zlib');
 var path = require('path');
 var http = require('http');
@@ -5,7 +6,6 @@ var tar = require('tar-fs');
 var fs = require('fs-extra');
 var async = require('async');
 var minimatch = require("minimatch");
-var querystring = require('querystring');
 var spawn = require('child_process').spawn;
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
@@ -102,16 +102,12 @@ exports.buildProject = function (name, operator, params, next) {
 	params = params || {};
 	async.waterfall([
 		function (next) {
-			historyModule.addHistory(name, operator, next);
+			historyModule.addHistory(name, operator, historyModule.STATUS_UPDATING, next);
 		},
 		function (data, next) {
 			history = data;
 			historyId = history['id'];
 			historyModule.setHistorySize(name, +project['history_size'] || 1, next);
-		},
-		function (next) {
-			history['status'] = historyModule.STATUS_UPDATING;
-			historyModule.updateHistory(name, historyId, history, next);
 		},
 		function (next) {
 			exports.ensureWorkspace(name, next);
@@ -168,7 +164,7 @@ exports.buildProject = function (name, operator, params, next) {
 			if (!ignores && project['ignores']) {
 				ignores = project['ignores'].split('\n');
 			}
-			var ignoreStr = ignores.join('    \n') || 'Empty';
+			var ignoreStr = ignores.join('\n    ') || 'Empty';
 			historyModule.writeOutput(name, historyId, step, 'Packing files...\n\nIgnores:\n    ' + ignoreStr + '\n', next);
 		},
 		function (next) {
@@ -328,18 +324,19 @@ exports.deployProject = function (name, historyId, nodes, next) {
 			host: node['host'],
 			token: node['token'],
 			history_id: historyId,
+			env_vars: project['env_vars'],
 			pre_deploy_scripts: project['pre_deploy_scripts'],
 			post_deploy_scripts: project['post_deploy_scripts']
 		};
 		var finished = false;
-		var qs = querystring.stringify(data);
+		var query = qs.stringify(data);
 		var host = node['host'];
 		var port = node['port'];
 		var req = http.request({
 			host: host,
 			port: port,
 			method: 'post',
-			path: '/deploy?' + qs
+			path: '/deploy?' + query
 		}, function (res) {
 			utils.receiveJSON(res, function (err, json) {
 				if (!finished) {
@@ -386,17 +383,18 @@ exports.executeScript = function (name, scriptId, next) {
 			host: node['host'],
 			token: node['token'],
 			script_id: scriptId,
-			command: script['command']
+			command: script['command'],
+			env_vars: project['env_vars']
 		};
 		var finished = false;
-		var qs = querystring.stringify(data);
+		var query = qs.stringify(data);
 		var host = node['host'];
 		var port = node['port'];
 		var req = http.request({
 			host: host,
 			port: port,
 			method: 'post',
-			path: '/execute?' + qs
+			path: '/execute?' + query
 		}, function (res) {
 			utils.receiveJSON(res, function (err, json) {
 				if (!finished) {
@@ -435,10 +433,11 @@ exports.getWorkspace = function (name) {
 };
 
 exports.getBuildEnv = function (name, historyId) {
+	var project = exports.getProject(name);
 	return utils.extend({}, process.env, {
 		PROJECT_NAME: name,
 		BUILD_ID: historyId
-	});
+	}, project['env_vars']);
 };
 
 exports.checkPermission = function (user, project, next) {
