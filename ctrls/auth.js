@@ -15,7 +15,7 @@ exports.getLoginViewHandler = function (req, res) {
 };
 
 exports.getLogoutViewHandler = function (req, res) {
-	res.clearCookie('id_token');
+	res.clearCookie('cdc_id_token');
 	res.redirect('/login');
 };
 
@@ -54,7 +54,7 @@ exports.signupHandler = function (req, res, next) {
 			next(err);
 		} else {
 			if (isFirst) {
-				res.cookie('id_token', jwt['id_token']);
+				res.cookie('cdc_id_token', jwt['id_token']);
 			}
 			res.json({
 				data: 'ok'
@@ -92,7 +92,7 @@ exports.loginHandler = function (req, res, next) {
 		if (err) {
 			next(err);
 		} else {
-			res.cookie('id_token', jwt['id_token']);
+			res.cookie('cdc_id_token', jwt['id_token']);
 			res.json({
 				data: jwt
 			});

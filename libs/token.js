@@ -24,12 +24,12 @@ function getSecret() {
 }
 
 exports.verifier = function (req, res, next) {
-	var token = req.cookies['id_token'] || req.query['id_token'];
+	var token = req.cookies['cdc_id_token'] || req.query['id_token'];
 	if (token) {
 		jwt.verify(token, secret, function (err, decoded) {
 			if (err) {
 				err = errFactory.unauthorized(err.message, err.stack);
-				res.clearCookie('id_token');
+				res.clearCookie('cdc_id_token');
 			}
 			req.user = decoded;
 			next(err);
@@ -40,7 +40,7 @@ exports.verifier = function (req, res, next) {
 };
 
 exports.decoder = function (req, res, next) {
-	var token = req.cookies['id_token'] || req.query['id_token'];
+	var token = req.cookies['cdc_id_token'] || req.query['id_token'];
 	if (token) {
 		req.user = jwt.decode(token);
 	}
