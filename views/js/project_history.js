@@ -30,7 +30,9 @@
 					var history = self.history = res['data'];
 					var status = history['status'];
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
-						self.checkStatus();
+						setTimeout(function () {
+							self.checkStatus();
+						}, 1000);
 					}
 				});
 			},
