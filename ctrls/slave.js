@@ -39,7 +39,9 @@ exports.deployHandler = function (req, res, next) {
 		},
 		function (output, next) {
 			deployResult += output;
-			req.pipe(zlib.Gunzip()).pipe(tar.extract(cwd)).on('finish', next);
+			var archive = req.pipe(zlib.Gunzip()).pipe(tar.extract(cwd));
+			archive.on('finish', next);
+			archive.on('error', next);
 		},
 		function (next) {
 			runCommand('post-deploy', postDeployScripts, cwd, env, next);

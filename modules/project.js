@@ -357,7 +357,7 @@ exports.deployProject = function (name, historyId, nodes, next) {
 		}
 	}, function (err, results) {
 		if (task && task['requests']) {
-			delete task[name];
+			delete tasks[name];
 		}
 		if (err) {
 			next(err);
