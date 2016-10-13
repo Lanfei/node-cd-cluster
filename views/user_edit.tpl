@@ -14,7 +14,7 @@
 </div>
 <div id="main">
 	<div class="toolbar">
-		<button @click="back" v-text="i18n('')"></button>
+		<button @click="back" v-text="i18n('Back')"></button>
 	</div>
 	<h3 class="sub-title" v-text="i18n('Edit User')"></h3>
 	<form @submit.prevent="submit">
