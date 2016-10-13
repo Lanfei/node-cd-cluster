@@ -1,6 +1,6 @@
 {
   "name": "cd-cluster",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "A lightweight Continuous Deployment / Continuous Integration platform written in node.",
   "main": "index.js",
   "bin": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/node-cd-cluster/ncc-slave.git"
+    "url": "git+https://github.com/Lanfei/cd-cluster.git"
   },
   "keywords": [
     "continuous",
@@ -23,9 +23,9 @@
   "author": "Lanfei",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/node-cd-cluster/ncc-slave/issues"
+    "url": "https://github.com/Lanfei/cd-cluster/issues"
   },
-  "homepage": "https://github.com/node-cd-cluster/ncc-slave#readme",
+  "homepage": "https://github.com/Lanfei/cd-cluster#readme",
   "dependencies": {
     "async": "^2.0.0",
     "color2html": "^0.1.2",
