@@ -119,9 +119,9 @@ exports.buildProject = function (name, operator, params, next) {
 			var repoBranch = project['repo_branch'] || 'master';
 			if (repoType === 'git') {
 				if (made) {
-					command = 'git clone --progress --depth 1 -b ' + repoBranch + ' ' + repoUrl + ' ./';
+					command = 'git clone --recurse --progress --depth 1 -b ' + repoBranch + ' ' + repoUrl + ' ./';
 				} else {
-					command = 'git pull';
+					command = 'git pull\ngit submodule foreach --recursive git pull';
 				}
 			} else if (repoType === 'svn') {
 				if (made) {
