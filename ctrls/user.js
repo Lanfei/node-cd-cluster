@@ -3,18 +3,14 @@ var token = require('../libs/token');
 var utils = require('../libs/utils');
 var errFactory = require('../libs/err_factory');
 var userModule = require('../modules/user');
+var projectModule = require('../modules/project');
 
 var FIELDS = ['username', 'email', 'tel', 'is_admin', 'enabled'];
 
-exports.getListViewHandler = function (req, res, next) {
-	var me = userModule.getUser(req.user['username']);
-	if (me) {
-		res.render('user_list', {
-			me: me
-		});
-	} else {
-		next(errFactory.unauthorized());
-	}
+exports.getListViewHandler = function (req, res) {
+	res.render('user_list', {
+		me: userModule.getUser(req.user['username'])
+	});
 };
 
 exports.getEditViewHandler = function (req, res, next) {
@@ -114,6 +110,9 @@ exports.deleteItemHandler = function (req, res, next) {
 		},
 		function (next) {
 			userModule.deleteUser(username, next)
+		},
+		function (next) {
+			projectModule.removeManager(username, next);
 		}
 	], function (err) {
 		if (err) {

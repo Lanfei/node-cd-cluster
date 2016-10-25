@@ -10,22 +10,40 @@ var historyModule = require('../modules/history');
 var FIELDS = ['name', 'repo_type', 'repo_url', 'repo_branch', 'build_scripts', 'test_scripts', 'deploy_nodes', 'ignores', 'pre_deploy_scripts', 'post_deploy_scripts', 'operation_scripts', 'env_vars', 'remote_build_enabled', 'remote_build_token', 'history_size', 'managers'];
 
 exports.getListViewHandler = function (req, res) {
+	res.render('project_list', {
+		me: userModule.getUser(req.user['username'])
+	});
+};
+
+exports.getInfoViewHandler = function (req, res, next) {
+	var name = req.params['name'];
+	async.waterfall([
+		function (next) {
+			checkProject(name, next);
+		},
+		function (project, next) {
+			projectModule.checkPermission(req.user, project, next);
+		}
+	], function (err) {
+		if (err) {
+			next(err);
+		} else {
+			res.render('project_info');
+		}
+	});
+};
+
+exports.getEditViewHandler = function (req, res, next) {
 	var me = userModule.getUser(req.user['username']);
-	if (me) {
-		res.render('project_list', {
-			me: me
-		});
-	} else {
-		next(errFactory.unauthorized());
-	}
-};
-
-exports.getInfoViewHandler = function (req, res) {
-	res.render('project_info');
-};
-
-exports.getEditViewHandler = function (req, res) {
-	res.render('project_edit');
+	userModule.checkAdminPermission(req.user, function (err) {
+		if (err) {
+			next(err);
+		} else {
+			res.render('project_edit', {
+				me: me
+			});
+		}
+	});
 };
 
 exports.getHistoryViewHandler = function (req, res) {

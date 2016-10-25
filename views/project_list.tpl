@@ -13,9 +13,11 @@
 	<h2 id="title" v-text="i18n('Projects')"></h2>
 </div>
 <div id="main">
+	<% if (me['is_admin']) { %>
 	<div class="toolbar">
 		<button @click="addProject" v-text="i18n('Add Project')"></button>
 	</div>
+	<% } %>
 	<h3 class="sub-title" v-text="i18n('Project List')"></h3>
 	<div class="table-wrapper">
 		<table>

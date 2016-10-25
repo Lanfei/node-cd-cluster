@@ -1,8 +1,8 @@
 var fs = require('fs');
 var express = require('express');
 var color2html = require('color2html');
-var token = require('../libs/token');
 var errFactory = require('../libs/err_factory');
+var userModule = require('../modules/user');
 var authCtrl = require('../ctrls/auth');
 var userCtrl = require('../ctrls/user');
 var projectCtrl = require('../ctrls/project');
@@ -14,39 +14,39 @@ router.post('/auth/signup', authCtrl.signupHandler);
 
 router.post('/auth/login', authCtrl.loginHandler);
 
-router.get('/users', token.verifier, userCtrl.getHandler);
+router.get('/users', userModule.verifier, userCtrl.getHandler);
 
-router.get('/users/:name', token.verifier, userCtrl.getItemHandler);
+router.get('/users/:name', userModule.verifier, userCtrl.getItemHandler);
 
-router.put('/users/:name', token.verifier, userCtrl.putItemHandler);
+router.put('/users/:name', userModule.verifier, userCtrl.putItemHandler);
 
-router.delete('/users/:name', token.verifier, userCtrl.deleteItemHandler);
+router.delete('/users/:name', userModule.verifier, userCtrl.deleteItemHandler);
 
-router.get('/histories', token.verifier, historyCtrl.getHandler);
+router.get('/histories', userModule.verifier, historyCtrl.getHandler);
 
-router.get('/projects', token.verifier, projectCtrl.getHandler);
+router.get('/projects', userModule.verifier, projectCtrl.getHandler);
 
-router.post('/projects', token.verifier, projectCtrl.postHandler);
+router.post('/projects', userModule.verifier, projectCtrl.postHandler);
 
-router.get('/projects/:name', token.verifier, projectCtrl.getItemHandler);
+router.get('/projects/:name', userModule.verifier, projectCtrl.getItemHandler);
 
-router.put('/projects/:name', token.verifier, projectCtrl.putItemHandler);
+router.put('/projects/:name', userModule.verifier, projectCtrl.putItemHandler);
 
-router.delete('/projects/:name', token.verifier, projectCtrl.deleteItemHandler);
+router.delete('/projects/:name', userModule.verifier, projectCtrl.deleteItemHandler);
 
-router.post('/projects/:name/clean', token.verifier, projectCtrl.cleanHandler);
+router.post('/projects/:name/clean', userModule.verifier, projectCtrl.cleanHandler);
 
-router.post('/projects/:name/build', token.decoder, projectCtrl.buildHandler);
+router.post('/projects/:name/build', userModule.decoder, projectCtrl.buildHandler);
 
-router.post('/projects/:name/abort', token.verifier, projectCtrl.abortHandler);
+router.post('/projects/:name/abort', userModule.verifier, projectCtrl.abortHandler);
 
-router.post('/projects/:name/deploy', token.verifier, projectCtrl.deployHandler);
+router.post('/projects/:name/deploy', userModule.verifier, projectCtrl.deployHandler);
 
-router.post('/projects/:name/execute', token.verifier, projectCtrl.executeHandler);
+router.post('/projects/:name/execute', userModule.verifier, projectCtrl.executeHandler);
 
-router.get('/projects/:name/status', token.verifier, projectCtrl.getStatusHandler);
+router.get('/projects/:name/status', userModule.verifier, projectCtrl.getStatusHandler);
 
-router.get('/projects/:name/histories/:id', token.verifier, historyCtrl.getItemHandler);
+router.get('/projects/:name/histories/:id', userModule.verifier, historyCtrl.getItemHandler);
 
 router.use(function (req, res, next) {
 	next(errFactory.notFound());

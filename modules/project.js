@@ -454,6 +454,18 @@ exports.checkPermission = function (user, project, next) {
 	}
 };
 
+exports.removeManager = function (manager, next) {
+	utils.forEach(projects, function (project) {
+		var managers = project['managers'];
+		var index = managers.indexOf(manager);
+		if (index >= 0) {
+			managers.splice(index, 1);
+			return false;
+		}
+	});
+	utils.writeConfig('projects', projects, next);
+};
+
 function resolveNodeResults(results, nodes, next) {
 	var err;
 	var output = '';
