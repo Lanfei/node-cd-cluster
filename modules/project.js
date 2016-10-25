@@ -121,7 +121,10 @@ exports.buildProject = function (name, operator, params, next) {
 				if (made) {
 					command = 'git clone --recurse --progress --depth 1 -b ' + repoBranch + ' ' + repoUrl + ' ./';
 				} else {
-					command = 'git pull\ngit submodule foreach --recursive git pull';
+					command = '' +
+						'git pull\n' +
+						'git submodule sync\n' +
+						'git submodule update --init --recursive';
 				}
 			} else if (repoType === 'svn') {
 				if (made) {
