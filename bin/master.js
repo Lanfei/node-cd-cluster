@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-var fs = require('fs-extra');
-var spawn = require('child_process').spawn;
 var program = require('commander');
 var utils = require('../libs/utils');
 var pkg = require('../package.json');
@@ -15,33 +13,21 @@ program
 	.action(function (port) {
 		var env = process.env;
 		env['CD_CLUSTER_PORT'] = port || 8080;
-		var child = spawn(process.argv[0], [__dirname + '/www'], {
-			env: env,
-			detached: true,
-			stdio: ['ignore']
-		});
-		child.unref();
-		child.stdout.on('data', function () {
-			fs.outputFileSync(utils.getConfigDir() + '/pids/master.pid', child.pid);
-			process.exit();
-		});
-		child.stderr.on('data', function (data) {
-			console.error(data.toString());
-		});
+		utils.startInstance('master', env);
 	});
 
 program
 	.command('stop')
 	.description('stop cd-cluster master')
 	.action(function () {
-		try {
-			var filename = utils.getConfigDir() + '/pids/master.pid';
-			var pid = fs.readFileSync(filename);
-			fs.remove(filename);
-			process.kill(pid);
-		} catch (e) {
-			console.error(e.message);
-		}
+		utils.stopInstance('master');
+	});
+
+program
+	.command('reload')
+	.description('reload cd-cluster master')
+	.action(function () {
+		utils.reloadInstance('master');
 	});
 
 if (!process.argv.slice(2).length) {

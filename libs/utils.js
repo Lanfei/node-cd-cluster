@@ -1,6 +1,44 @@
 var os = require('os');
+var path = require('path');
 var fs = require('fs-extra');
+var spawn = require('child_process').spawn;
 var errFactory = require('./err_factory');
+
+exports.startInstance = function (role, env) {
+	var configDir = exports.getConfigDir();
+	var child = spawn(process.argv[0], [path.join(__dirname, '../bin/www')], {
+		env: env,
+		detached: true,
+		stdio: ['ignore']
+	});
+	child.unref();
+	child.stdout.on('data', function () {
+		fs.outputFileSync(configDir + '/pids/' + role + '.pid', child.pid);
+		process.exit();
+	});
+	child.stderr.on('data', function (data) {
+		console.error(data.toString());
+	});
+	fs.outputJsonSync(configDir + '/envs/' + role + '.json', env);
+};
+
+exports.reloadInstance = function (role) {
+	var configDir = exports.getConfigDir();
+	var env = fs.readJsonSync(configDir + '/envs/' + role + '.json');
+	exports.stopInstance(role);
+	exports.startInstance(role, env);
+};
+
+exports.stopInstance = function (role) {
+	try {
+		var filename = exports.getConfigDir() + '/pids/' + role + '.pid';
+		var pid = fs.readFileSync(filename);
+		fs.remove(filename);
+		process.kill(pid);
+	} catch (e) {
+		console.error(e.message);
+	}
+};
 
 exports.extend = function (target, /** ..., **/ objects) {
 	target = target || {};
