@@ -66,7 +66,6 @@ exports.putItemHandler = function (req, res, next) {
 			user = data;
 			var myName = req.user['username'];
 			me = userModule.getUser(myName);
-			console.log(me);
 			if (myName !== user['username'] && !me['is_admin']) {
 				next(errFactory.unauthorized());
 			} else {

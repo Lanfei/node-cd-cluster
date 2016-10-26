@@ -28,7 +28,9 @@ exports.signupHandler = function (req, res, next) {
 		},
 		function (data, next) {
 			user = data;
-			utils.checkParams([data['username'], data['password']], next);
+			var username = data['username'] || '';
+			var password = data['password'];
+			utils.checkParams([username, password, /^\w+$/.test(username)], next);
 		},
 		function (next) {
 			checkConflict(user['username'], next);

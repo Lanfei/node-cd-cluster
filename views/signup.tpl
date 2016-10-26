@@ -21,7 +21,7 @@
 			<tr>
 				<td>
 					<label>
-						<input type="text" :placeholder="i18n('Username')" v-model="user['username']" required>
+						<input type="text" :placeholder="i18n('Username')" v-model="user['username']" pattern="^\w+$" required>
 					</label>
 					<label>
 						<input type="password" :placeholder="i18n('Password')" v-model="user['password']" required>
