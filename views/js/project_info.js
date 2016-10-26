@@ -25,7 +25,7 @@
 				var params = utils.parseParams('/projects/:name');
 				var name = params['name'];
 				if (name) {
-					reqwest(API + '/' + name, function (res) {
+					reqwest(API + '/' + encodeURIComponent(name), function (res) {
 						var project = res['data'];
 						var histories = project['histories'];
 						var latestHistory = histories[histories.length - 1] || {};
@@ -41,7 +41,7 @@
 				var self = this;
 				var project = this.project;
 				var name = project['name'];
-				reqwest(API + '/' + name + '/status', function (res) {
+				reqwest(API + '/' + encodeURIComponent(name) + '/status', function (res) {
 					var data = res['data'];
 					var status = data['status'];
 					var histories = project['histories'];
@@ -63,7 +63,7 @@
 				var project = this.project;
 				var name = project['name'];
 				reqwest({
-					url: API + '/' + name + '/abort',
+					url: API + '/' + encodeURIComponent(name) + '/abort',
 					method: 'post',
 					success: function () {
 						self.checkStatus();
@@ -85,7 +85,7 @@
 				self.executionResult = '';
 				reqwest({
 					method: 'post',
-					url: API + '/' + name + '/deploy?history_id=' + historyId,
+					url: API + '/' + encodeURIComponent(name) + '/deploy?history_id=' + historyId,
 					success: function (res) {
 						self.executionResult = res['data'];
 						self.executing = false;
@@ -108,7 +108,7 @@
 				self.executionResult = '';
 				reqwest({
 					method: 'post',
-					url: API + '/' + name + '/execute?script_id=' + scriptId,
+					url: API + '/' + encodeURIComponent(name) + '/execute?script_id=' + scriptId,
 					success: function (res) {
 						self.executionResult = res['data'];
 						self.executing = false;

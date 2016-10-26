@@ -79,14 +79,14 @@
 			<tr v-for="history in project['histories'] | orderBy 'id' -1" track-by="$index">
 				<td>
 					<a v-text="'#' + history['id']"
-					   :href="'/projects/' + project['name'] + '/histories/' + history['id']"></a>
+					   :href="'/projects/' + encodeURIComponent(project['name']) + '/histories/' + history['id']"></a>
 				</td>
 				<td v-text="history['start_time'] | datetime"></td>
 				<td v-text="history['duration'] | duration"></td>
 				<td v-text="history['operator']"></td>
 				<td>
 					<a class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"
-					   :href="'/projects/' + project['name'] + '/histories/' + history['id']"></a>
+					   :href="'/projects/' + encodeURIComponent(project['name']) + '/histories/' + history['id']"></a>
 				</td>
 				<td>
 					<a class="option" @click="abort" v-text="i18n('Abort')"

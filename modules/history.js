@@ -84,7 +84,7 @@ exports.setHistorySize = function (name, size, next) {
 };
 
 exports.getOutputDir = function (name, id) {
-	var dir = utils.getConfigDir() + '/outputs/' + name;
+	var dir = utils.getConfigDir() + '/outputs/' + encodeURIComponent(name);
 	if (id) {
 		dir += '/' + id;
 	}
@@ -141,7 +141,7 @@ exports.cleanHistories = function (name, next) {
 
 exports.getBuildDir = function (name) {
 	var configDir = utils.getConfigDir();
-	return configDir + '/builds/' + name;
+	return configDir + '/builds/' + encodeURIComponent(name);
 };
 
 exports.getBuildPath = function (name, id) {
@@ -149,5 +149,5 @@ exports.getBuildPath = function (name, id) {
 };
 
 exports.getBuildUrl = function (name, id) {
-	return '/projects/' + name + '/builds/' + id;
+	return '/projects/' + encodeURIComponent(name) + '/builds/' + id;
 };

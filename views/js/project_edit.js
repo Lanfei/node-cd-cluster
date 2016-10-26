@@ -203,7 +203,7 @@
 				}
 				var name = this.name;
 				reqwest({
-					url: API + '/' + name + '/clean',
+					url: API + '/' + encodeURIComponent(name) + '/clean',
 					method: 'post',
 					success: function () {
 					},

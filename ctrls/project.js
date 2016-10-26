@@ -53,7 +53,7 @@ exports.getHistoryViewHandler = function (req, res) {
 exports.downBuildPackHandler = function (req, res, next) {
 	var id = req.params['id'];
 	var name = req.params['name'];
-	var filename = name + '-' + id + '.tar.gz';
+	var filename = encodeURIComponent(name) + '-' + id + '.tar.gz';
 	var buildPath = historyModule.getBuildPath(name, id);
 	async.waterfall([
 		function (next) {

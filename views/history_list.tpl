@@ -29,10 +29,10 @@
 			<tbody>
 			<tr v-for="history in histories | orderBy 'start_time' -1" track-by="$index">
 				<td>
-					<a :href="'/projects/' + history['project']" v-text="history['project']"></a>
+					<a :href="'/projects/' + encodeURIComponent(history['project'])" v-text="history['project']"></a>
 				</td>
 				<td>
-					<a :href="'/projects/' + history['project'] + '/histories/' + history['id']"
+					<a :href="'/projects/' + encodeURIComponent(history['project']) + '/histories/' + history['id']"
 					   v-text="'#' + history['id']"></a>
 				</td>
 				<td v-text="history['start_time'] | datetime"></td>
@@ -40,7 +40,7 @@
 				<td v-text="history['operator']"></td>
 				<td>
 					<a class="tag {{history['status'] | statusColor}}" v-text="history['status'] | statusStr"
-					   :href="'/projects/' + history['project'] + '/histories/' + history['id']"></a>
+					   :href="'/projects/' + encodeURIComponent(history['project']) + '/histories/' + history['id']"></a>
 				</td>
 			</tr>
 			</tbody>

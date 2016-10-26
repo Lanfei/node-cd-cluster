@@ -26,7 +26,7 @@
 				var id = this.id = params['id'];
 				var name = this.name = params['name'];
 
-				reqwest(API + '/' + name + '/histories/' + id, function (res) {
+				reqwest(API + '/' + encodeURIComponent(name) + '/histories/' + id, function (res) {
 					var history = self.history = res['data'];
 					var status = history['status'];
 					if (status >= self.STATUS_UPDATING && status <= self.STATUS_DEPLOYING) {
@@ -45,7 +45,7 @@
 				var id = this.id;
 				var name = this.name;
 				reqwest({
-					url: API + '/' + name + '/histories/' + id,
+					url: API + '/' + encodeURIComponent(name) + '/histories/' + id,
 					success: function (res) {
 						var data = res['data'];
 						var status = data['status'];

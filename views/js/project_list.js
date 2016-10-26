@@ -37,7 +37,7 @@
 				location.href = '/projects/add';
 			},
 			editProject: function (project) {
-				location.href = '/projects/' + project['name'] + '/edit';
+				location.href = '/projects/' + encodeURIComponent(project['name']) + '/edit';
 			},
 			chooseProject: function (project, index) {
 				var params = {};
@@ -61,7 +61,7 @@
 				var self = this;
 				var name = this.curProject['name'];
 				reqwest({
-					url: API + '/' + name + '/build',
+					url: API + '/' + encodeURIComponent(name) + '/build',
 					method: 'post',
 					data: JSON.stringify(this.curParams),
 					success: function () {
@@ -82,7 +82,7 @@
 				var self = this;
 				var name = project['name'];
 				reqwest({
-					url: API + '/' + name + '/abort',
+					url: API + '/' + encodeURIComponent(name) + '/abort',
 					method: 'post',
 					success: function () {
 						self.checkStatus(index);
@@ -121,7 +121,7 @@
 				var projects = this.projects;
 				var project = projects[index];
 				var name = project['name'];
-				reqwest(API + '/' + name + '/status', function (res) {
+				reqwest(API + '/' + encodeURIComponent(name) + '/status', function (res) {
 					var data = res['data'];
 					var status = data['status'];
 					project['status'] = status || self.STATUS_INITIAL;
