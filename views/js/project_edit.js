@@ -31,7 +31,7 @@
 				var params = utils.parseParams('/projects/:name/edit');
 				var name = this.name = params['name'];
 				if (name) {
-					reqwest(API + '/' + name, function (res) {
+					reqwest(API + '/' + encodeURIComponent(name), function (res) {
 						var data = res['data'];
 						data['managers'] = data['managers'] || [];
 						data['env_vars'] = data['env_vars'] || [];
@@ -178,7 +178,7 @@
 			submit: function () {
 				var name = this.name;
 				var project = this.project;
-				var url = name ? API + '/' + name : API;
+				var url = name ? API + '/' + encodeURIComponent(name) : API;
 				var method = name ? 'put' : 'post';
 				reqwest({
 					url: url,
@@ -223,7 +223,7 @@
 				}
 				var name = this.name;
 				reqwest({
-					url: API + '/' + name,
+					url: API + '/' + encodeURIComponent(name),
 					method: 'delete',
 					success: function () {
 						location.href = '/projects';
