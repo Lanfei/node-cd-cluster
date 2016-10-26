@@ -115,7 +115,7 @@ exports.readConfig = function (name, next) {
 	var configDir = exports.getConfigDir();
 	var filename = configDir + '/' + name + '.json';
 	try {
-		config = JSON.parse(fs.readFileSync(filename));
+		config = fs.readJsonSync(filename);
 	} catch (e) {
 		err = e;
 		config = null;
@@ -127,7 +127,7 @@ exports.readConfig = function (name, next) {
 exports.writeConfig = function (name, config, next) {
 	var configDir = exports.getConfigDir();
 	var filename = configDir + '/' + name + '.json';
-	fs.writeFile(filename, JSON.stringify(config), next);
+	fs.outputJson(filename, config, next);
 };
 
 exports.checkParams = function (params, next) {
