@@ -9,7 +9,7 @@ program
 
 program
 	.command('start [port=8081]')
-	.description('start cd-cluster slave')
+	.description('start the slave server')
 	.option('-t, --token [token]', 'a token used to verify requests')
 	.action(function (port, options) {
 		var env = process.env;
@@ -21,14 +21,14 @@ program
 
 program
 	.command('stop')
-	.description('stop cd-cluster slave')
+	.description('stop the slave server')
 	.action(function () {
 		utils.stopInstance('slave');
 	});
 
 program
 	.command('reload')
-	.description('reload cd-cluster slave')
+	.description('reload the slave server')
 	.action(function () {
 		utils.reloadInstance('slave');
 	});

@@ -9,7 +9,7 @@ program
 
 program
 	.command('start [port=8080]')
-	.description('start cd-cluster master')
+	.description('start the master server')
 	.action(function (port) {
 		var env = process.env;
 		env['CD_CLUSTER_PORT'] = port || 8080;
@@ -18,14 +18,14 @@ program
 
 program
 	.command('stop')
-	.description('stop cd-cluster master')
+	.description('stop the master server')
 	.action(function () {
 		utils.stopInstance('master');
 	});
 
 program
 	.command('reload')
-	.description('reload cd-cluster master')
+	.description('reload the master server')
 	.action(function () {
 		utils.reloadInstance('master');
 	});
