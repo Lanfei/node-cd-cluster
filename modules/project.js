@@ -123,8 +123,9 @@ exports.buildProject = function (name, operator, params, next) {
 				} else {
 					command = '' +
 						'git pull\n' +
-						'git submodule sync\n' +
-						'git submodule update --init --recursive';
+						'git submodule init\n' +
+						'git submodule sync --recursive\n' +
+						'git submodule update --init --recursive --depth 1';
 				}
 			} else if (repoType === 'svn') {
 				if (made) {
